@@ -1,0 +1,101 @@
+{
+  "intro": "Toscana Diagnostica ha costruito un Sistema di Gestione Integrato che unisce qualità clinica, sicurezza del paziente, tutela dei dati, responsabilità ambientale e governance organizzativa. Verificabile, misurabile, in costante miglioramento.",
+  "organismo": {
+    "nome": "EuCI - European Certification Institute Ltd",
+    "sede": "2nd Floor Tower Business Centre, Tower Street, Swatar BKR 4013, Malta",
+    "accreditamento": "Accreditato ESYD (Hellenic Accreditation System), certificato n. 831, per la certificazione dei sistemi di gestione. ESYD è firmatario dell'Accordo Multilaterale EA (European co-operation for Accreditation).",
+    "verifica": "https://www.eucicertification.com",
+    "settore_iaf": "38 - Sanità e servizi sociali"
+  },
+  "sedi": {
+    "legale": "Viale Belfiore 55, 50144 Firenze",
+    "operativa": "Via di Pratignone 13/4, 50019 Sesto Fiorentino (FI)"
+  },
+  "campo": "Erogazione di prestazioni sanitarie, in regime ambulatoriale, nell'ambito della Diagnostica di Laboratorio (indagini diagnostiche nelle discipline Patologia Clinica, Biochimica Clinica, Microbiologia e Virologia e Genetica Medica), Diagnostica per Immagini (radiologia digitale, mammografia, ortopantomografia, mineralometria ossea MOC, TAC, Risonanza Magnetica, ecografia, elettromiografia), Endoscopia (con o senza sedazione profonda), Medicina Fisica e Riabilitazione, Medicina Specialistica e Medicina del Lavoro.",
+  "certificazioni": [
+    {
+      "norma": "ISO 9001:2015",
+      "titolo": "Sistema di Gestione per la Qualità",
+      "cosa": "Qualità dei processi: dalla richiesta al referto, ogni fase è definita, misurata e migliorata. Per il cliente Service significa tempi, tracciabilità e responsabilità dichiarati e verificabili.",
+      "numero": "TOSC5191Q2606",
+      "prima_emissione": "04/09/2026",
+      "emissione_corrente": "04/09/2026",
+      "scadenza": "03/09/2029",
+      "pdf": "TD - Certificato ISO 9001-2015 - TOSC5191Q2606.pdf",
+      "logo": "logo-iso9001.png"
+    },
+    {
+      "norma": "ISO 45001:2018",
+      "titolo": "Sistema di Gestione per la Salute e Sicurezza sul Lavoro",
+      "cosa": "Sicurezza dei lavoratori e di chi opera nelle nostre sedi, compresi i corrieri e il personale dei laboratori clienti che consegna i campioni. Certificato emesso secondo EN ISO 45001:2023 e valutato in accordo a IAF MD 22.",
+      "numero": "TOSC5191H2605",
+      "prima_emissione": "04/09/2026",
+      "emissione_corrente": "04/09/2026",
+      "scadenza": "03/09/2029",
+      "pdf": "TD - Certificato ISO 45001-2018 - TOSC5191H2605.pdf",
+      "logo": "logo-iso45001.png"
+    },
+    {
+      "norma": "ISO 14001:2015",
+      "titolo": "Sistema di Gestione Ambientale",
+      "cosa": "Gestione ambientale: rifiuti sanitari, reagenti, consumi, logistica dei campioni. Il laboratorio misura e riduce il proprio impatto e lo rendiconta.",
+      "numero": "TOSC5191E2602",
+      "prima_emissione": "04/09/2026",
+      "emissione_corrente": "04/09/2026",
+      "scadenza": "30/04/2029",
+      "pdf": "TD - Certificato ISO 14001-2015 - TOSC5191E2602.pdf",
+      "logo": "logo-iso14001.png"
+    },
+    {
+      "norma": "ISO 37001:2025",
+      "titolo": "Sistema di Gestione per la Prevenzione della Corruzione",
+      "cosa": "Anticorruzione: regole su omaggi, conflitti di interesse, rapporti con fornitori, medici prescrittori e clienti. Una garanzia di correttezza per chi affida a Toscana Diagnostica il proprio service.",
+      "numero": "TOSC5191A2604",
+      "prima_emissione": "04/09/2026",
+      "emissione_corrente": "04/09/2026",
+      "scadenza": "03/09/2029",
+      "pdf": "TD - Certificato ISO 37001-2025 - TOSC5191A2604.pdf",
+      "logo": "logo-iso37001.png"
+    },
+    {
+      "norma": "ISO 7101:2024",
+      "titolo": "Sistema di Gestione per la Qualità nelle Organizzazioni Sanitarie",
+      "cosa": "Gestione sanitaria: la prima norma internazionale dedicata alla qualità nelle organizzazioni sanitarie. Centralità del paziente, sicurezza delle cure, esiti clinici misurati."
+    },
+    {
+      "norma": "PAS 24000:2022",
+      "titolo": "Responsabilità Sociale",
+      "cosa": "Responsabilità sociale: diritti dei lavoratori, catena di fornitura etica, rapporto con la comunità e con il territorio."
+    },
+    {
+      "norma": "ISO/IEC 27001:2022",
+      "titolo": "Sistema di Gestione per la Sicurezza delle Informazioni",
+      "cosa": "Sicurezza delle informazioni: protezione dei dati clinici e dei referti, controllo degli accessi al LIS, continuità operativa dei sistemi. Per i laboratori clienti: i dati dei loro pazienti sono trattati con un sistema di sicurezza certificabile."
+    },
+    {
+      "norma": "ISO 30415:2021",
+      "titolo": "Diversità e Inclusione",
+      "cosa": "Inclusione aziendale: diversità, equità e inclusione come requisiti organizzativi misurati, non come dichiarazioni."
+    },
+    {
+      "norma": "UNI/PdR 125:2022",
+      "titolo": "Parità di Genere",
+      "cosa": "Parità di genere: cultura e strategia, governance, processi HR, opportunità di crescita, equità remunerativa, tutela della genitorialità."
+    }
+  ],
+  "altri_requisiti": [
+    {
+      "titolo": "Accreditamento istituzionale con il Servizio Sanitario Regionale",
+      "testo": "Ai sensi della L.R. Toscana 51/2009, con verifiche quinquennali dei requisiti organizzativi, strutturali e tecnologici."
+    },
+    {
+      "titolo": "Autorizzazione sanitaria",
+      "testo": "Autorizzazione n. 12 del 12/06/2026 rilasciata dal Comune di Sesto Fiorentino. Direttore Sanitario: prof. Gian Luigi Taddei."
+    },
+    {
+      "titolo": "Politica Integrata",
+      "testo": "Il documento di sistema sottoscritto dalla Direzione che fissa impegni e obiettivi del Sistema di Gestione Integrato.",
+      "pdf": "TD-SGI-POL001_01 - Politica Integrata.pdf"
+    }
+  ]
+}

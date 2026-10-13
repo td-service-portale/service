@@ -1,0 +1,18 @@
+{
+ "reg006_rev": "77",
+ "reg006_data": "7 ottobre 2026",
+ "n_docs": 148,
+ "n_prep_docs": 40,
+ "n_pdf": 188,
+ "n_stampabili": 140,
+ "n_prestazioni": 566,
+ "n_prep_collegate": 566,
+ "build": "13/10/2026 08:10",
+ "mancanti": [],
+ "esclusi": [],
+ "aree": [
+  "16. Service di Laboratorio",
+  "17. Accettazione",
+  "18. Laboratorio di Analisi"
+ ]
+}

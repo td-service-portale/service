@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#01212C">
+<meta name="description" content="Le certificazioni di qualità di Toscana Diagnostica: Sistema di Gestione Integrato, certificati EuCI, accreditamento e autorizzazione sanitaria.">
+<title>Certificazioni di qualità · Toscana Diagnostica Service</title>
+<link rel="icon" type="image/png" href="/static/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+<div class="shell">
+  <aside class="side" id="side"></aside>
+  <main class="main">
+    <div class="topbar" id="topbar"></div>
+    <div class="page">
+      <div class="page-head">
+        <div>
+          <h1>Certificazioni di qualità</h1>
+          <div class="sub" id="intro"></div>
+        </div>
+      </div>
+      <div class="grid g4" id="kpis"></div>
+      <div class="grid g2 mt" id="certs"></div>
+      <div class="card mt">
+        <div class="hd"><h2>Campo di applicazione certificato</h2></div>
+        <div class="bd prose" id="campo"></div>
+      </div>
+      <div class="grid g3 mt" id="altri"></div>
+      <div class="card mt">
+        <div class="hd"><h2>Organismo di certificazione</h2></div>
+        <div class="bd prose" id="organismo"></div>
+      </div>
+      <footer class="foot" id="footer"></footer>
+    </div>
+  </main>
+</div>
+<script src="/static/shell.js"></script>
+<script>
+(function () {
+  const { icon, esc, shell, footer } = window.SGI;
+  const $ = id => document.getElementById(id);
+  Promise.all([fetch('/data/certificazioni.json').then(r => r.json()), fetch('/api/meta').then(r => r.json())]).then(([C, m]) => {
+    shell({ page: 'cert', meta: m, aree: null, shortcuts: C.certificazioni.filter(c => c.pdf).map(c => ({ icon: 'award', label: 'Certificato ' + c.norma.split(':')[0], href: encodeURI('/certificati/' + c.pdf), blank: true })) });
+    footer(m);
+    $('intro').textContent = C.intro;
+    const emessi = C.certificazioni.filter(c => c.numero);
+    $('kpis').innerHTML = `
+      <div class="card kpi accent"><div class="lbl">Norme del Sistema di Gestione Integrato</div><div class="val">${C.certificazioni.length}</div><div class="foot">qualità, sicurezza, ambiente, anticorruzione, sanità, sociale, informazioni, inclusione, parità</div></div>
+      <div class="card kpi"><div class="lbl">Certificati scaricabili</div><div class="val">${emessi.length}</div><div class="foot">emessi il ${esc(emessi[0].prima_emissione)} · validità triennale</div></div>
+      <div class="card kpi"><div class="lbl">Organismo di certificazione</div><div class="val" style="font-size:20px">EuCI</div><div class="foot">accreditato ESYD n. 831 · settore IAF 38</div></div>
+      <div class="card kpi"><div class="lbl">Sedi certificate</div><div class="val" style="font-size:20px">2</div><div class="foot">sede legale Firenze · unità operativa Sesto Fiorentino</div></div>`;
+    $('certs').innerHTML = C.certificazioni.map(c => `
+      <div class="card"><div class="bd cert">
+        ${c.logo ? `<img src="/static/${esc(c.logo)}" alt="Logo certificazione ${esc(c.norma)}">` : `<div class="nologo">${esc(c.norma)}</div>`}
+        <div>
+          <div class="norma">${esc(c.norma)}</div>
+          <div class="titolo">${esc(c.titolo)}</div>
+          <div class="cosa">${esc(c.cosa)}</div>
+          ${c.numero ? `<dl><dt>Certificato n.</dt><dd>${esc(c.numero)}</dd><dt>Prima emissione</dt><dd>${esc(c.prima_emissione)}</dd><dt>Scadenza</dt><dd>${esc(c.scadenza)}</dd><dt>Organismo</dt><dd>EuCI · accreditamento ESYD 831</dd></dl>
+          <div class="actions"><a class="btn sm" href="${encodeURI('/certificati/' + c.pdf)}" target="_blank">${icon('doc', 14)} Apri il certificato</a><a class="btn sm ghost" href="${esc(C.organismo.verifica)}" target="_blank" rel="noopener">Verifica validità su EuCI</a></div>` : ''}
+        </div>
+      </div></div>`).join('');
+    $('campo').innerHTML = `<p>${esc(C.campo)}</p><p class="small muted">Sede legale: ${esc(C.sedi.legale)} · Unità operativa: ${esc(C.sedi.operativa)} · Settore IAF ${esc(C.organismo.settore_iaf)}</p>`;
+    $('altri').innerHTML = C.altri_requisiti.map(a => `<div class="card"><div class="hd"><h2>${esc(a.titolo)}</h2></div><div class="bd"><p style="margin:0 0 ${a.pdf ? '10px' : '0'}" class="muted">${esc(a.testo)}</p>${a.pdf ? `<a class="btn sm" href="${encodeURI('/certificati/' + a.pdf)}" target="_blank">${icon('doc', 14)} Apri il documento</a>` : ''}</div></div>`).join('');
+    $('organismo').innerHTML = `<p><strong>${esc(C.organismo.nome)}</strong> · ${esc(C.organismo.sede)}</p><p class="muted">${esc(C.organismo.accreditamento)}</p><p class="small muted">La validità di ogni certificato è verificabile tramite il QR code stampato sul certificato o su <a href="${esc(C.organismo.verifica)}" target="_blank" rel="noopener">${esc(C.organismo.verifica.replace('https://', ''))}</a>.</p>`;
+  });
+})();
+</script>
+</body>
+</html>

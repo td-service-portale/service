@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#01212C">
+<meta name="description" content="VEQ, Valutazione Esterna di Qualità: i programmi CRRVEQ Careggi a cui partecipa il laboratorio di Toscana Diagnostica e le procedure di gestione della qualità analitica.">
+<title>VEQ · Valutazione Esterna di Qualità · Toscana Diagnostica Service</title>
+<link rel="icon" type="image/png" href="/static/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+<div class="shell">
+  <aside class="side" id="side"></aside>
+  <main class="main">
+    <div class="topbar" id="topbar"></div>
+    <div class="page">
+      <div class="page-head">
+        <div>
+          <h1>VEQ · Valutazione Esterna di Qualità</h1>
+          <div class="sub" id="intro"></div>
+        </div>
+      </div>
+      <div class="grid g4" id="kpis"></div>
+      <div class="card mt">
+        <div class="hd"><h2>Come funziona</h2></div>
+        <div class="bd"><div class="steps">
+          <div class="step"><div class="n">1</div><div class="t">Campioni a titolo ignoto</div><div class="d">Il CRRVEQ invia al laboratorio campioni di controllo secondo il calendario di ogni programma (più spedizioni l'anno).</div></div>
+          <div class="step"><div class="n">2</div><div class="t">Analisi in routine</div><div class="d">I campioni sono analizzati con gli stessi strumenti, reagenti e operatori dei campioni dei pazienti.</div></div>
+          <div class="step"><div class="n">3</div><div class="t">Confronto interlaboratorio</div><div class="d">Il centro confronta i risultati con il valore assegnato e con quelli degli altri laboratori, applicando limiti di accettabilità per analita.</div></div>
+          <div class="step"><div class="n">4</div><div class="t">Report e azioni</div><div class="d">Ogni report è valutato dal Direttore Tecnico; uno scostamento genera analisi delle cause e azione correttiva tracciata (TD-SGI-PRO045, PRO082).</div></div>
+        </div></div>
+      </div>
+      <div class="grid g2 mt">
+        <div class="card">
+          <div class="hd"><h2 id="progTitle">Programmi VEQ</h2><span class="spacer"></span><span class="badge b-teal" id="progCount">0</span></div>
+          <div class="bd" id="programmi"></div>
+        </div>
+        <div>
+          <div class="card">
+            <div class="hd"><h2>Perché conta per chi lavora con noi</h2></div>
+            <div class="bd prose" id="perche"></div>
+          </div>
+          <div class="card mt">
+            <div class="hd"><h2>Il centro VEQ</h2></div>
+            <div class="bd prose" id="centro"></div>
+          </div>
+          <div class="card mt">
+            <div class="hd"><h2>Documenti del Sistema di Gestione</h2></div>
+            <div class="bd"><div class="tiles" id="docTiles" style="grid-template-columns:1fr"></div></div>
+          </div>
+        </div>
+      </div>
+      <footer class="foot" id="footer"></footer>
+    </div>
+  </main>
+</div>
+<script src="/static/shell.js"></script>
+<script>
+(function () {
+  const { icon, esc, shell, footer } = window.SGI;
+  const $ = id => document.getElementById(id);
+  Promise.all([fetch('/data/veq.json').then(r => r.json()), fetch('/api/meta').then(r => r.json()), fetch('/data/docs.json').then(r => r.json())]).then(([V, m, docs]) => {
+    shell({ page: 'veq', meta: m, aree: null, shortcuts: [
+      { icon: 'link', label: 'Sito CRRVEQ Careggi', href: V.centro.sito, blank: true },
+      V.contratto_pdf ? { icon: 'doc', label: 'Contratto di adesione ' + V.ciclo, href: encodeURI('/certificati/' + V.contratto_pdf), blank: true } : null,
+    ].filter(Boolean) });
+    footer(m);
+    $('intro').textContent = V.intro;
+    const acc = V.programmi.filter(p => p.accreditato).length;
+    const aree = [...new Set(V.programmi.map(p => p.area))];
+    $('kpis').innerHTML = `
+      <div class="card kpi accent"><div class="lbl">Programmi VEQ · ciclo ${esc(V.ciclo)}</div><div class="val">${V.programmi.length}</div><div class="foot">${aree.length} aree analitiche</div></div>
+      <div class="card kpi"><div class="lbl">Programmi accreditati ISO/IEC 17043</div><div class="val">${acc}</div><div class="foot">provider accreditato ACCREDIA</div></div>
+      <div class="card kpi"><div class="lbl">Centro di riferimento</div><div class="val" style="font-size:20px">CRRVEQ</div><div class="foot">AOU Careggi · Regione Toscana · dal 1989</div></div>
+      <div class="card kpi"><div class="lbl">Report per laboratorio</div><div class="val" style="font-size:20px">per esercizio</div><div class="foot">più elaborazione finale di ciclo e attestato</div></div>`;
+    $('progCount').textContent = V.programmi.length;
+    $('progTitle').textContent = 'Programmi VEQ · ciclo ' + V.ciclo;
+    $('programmi').innerHTML = aree.map(a => `<h3 style="margin:10px 0 4px">${esc(a)}</h3>` + V.programmi.filter(p => p.area === a).map(p => `
+      <div class="veq-prog"><span class="strong">${esc(p.nome)}</span>${p.accreditato ? '<span class="badge b-green">accreditato ISO/IEC 17043</span>' : '<span class="badge b-grey">programma non accreditato</span>'}</div>`).join('')).join('') +
+      `<p class="small muted" style="margin:14px 0 0">${esc(V.note_ciclo)}</p>`;
+    $('perche').innerHTML = `<p>${esc(V.perche)}</p>`;
+    $('centro').innerHTML = `<p><strong>${esc(V.centro.nome)}</strong><br>${esc(V.centro.ente)}</p><p class="muted">${esc(V.centro.descrizione)}</p><p class="small">${esc(V.centro.indirizzo)} · tel. ${esc(V.centro.telefono)} · <a href="mailto:${esc(V.centro.email)}">${esc(V.centro.email)}</a> · <a href="${esc(V.centro.sito)}" target="_blank" rel="noopener">${esc(V.centro.sito.replace('https://', ''))}</a></p>`;
+    const find = c => docs.find(d => d.code.startsWith(c + '_'));
+    $('docTiles').innerHTML = V.documenti_sgi.map(find).filter(Boolean).map(d => `<a class="tile" href="${d.pdf ? encodeURI('/docs/' + d.pdf) : '#'}" target="_blank"><div class="code">${esc(d.code)}</div><div class="name">${esc(d.title)}</div></a>`).join('');
+  });
+})();
+</script>
+</body>
+</html>

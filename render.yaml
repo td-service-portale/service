@@ -1,0 +1,17 @@
+# Render Blueprint - Portale Service di Laboratorio Toscana Diagnostica
+# Deploy: New + > Blueprint > seleziona il repo GitHub. Render legge questo file e crea il servizio.
+services:
+  - type: web
+    name: td-service-portale
+    runtime: python
+    plan: starter         # sempre acceso (free = si addormenta dopo 15 min, primo accesso ~30 s)
+    region: frankfurt
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --workers 2 --threads 4 --timeout 60
+    healthCheckPath: /healthz
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.6
+      - key: CANONICAL_HOST
+        sync: false            # impostare a mano in Render > Environment (service.toscanadiagnostica.it) SOLO dopo che il dominio risulta Verified e il certificato Issued; se attivo prima crea un loop di redirect

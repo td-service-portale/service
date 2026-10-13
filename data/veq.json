@@ -1,0 +1,42 @@
+{
+  "intro": "La Valutazione Esterna di Qualità (VEQ) è il controllo indipendente dell'affidabilità analitica di un laboratorio. Un centro terzo invia campioni a titolo ignoto; il laboratorio li analizza come campioni di routine e trasmette i risultati; il centro li confronta con il valore assegnato e con i risultati degli altri laboratori partecipanti, applicando limiti di accettabilità definiti per ogni analita. Il laboratorio riceve un report per ogni esercizio e, a fine ciclo, l'elaborazione finale per metodo e strumento e l'attestato di partecipazione.",
+  "perche": "Per un laboratorio cliente in service la VEQ è la prova oggettiva che i risultati ricevuti sono confrontabili con quelli dei migliori laboratori della regione. Toscana Diagnostica partecipa ai programmi VEQ e gestisce i risultati con la procedura TD-SGI-PRO045 (Gestione della Valutazione Esterna di Qualità), integrata con il Controllo Interno di Qualità giornaliero (TD-SGI-PRO046) e con la gestione delle non conformità tecniche (TD-SGI-PRO082). Ogni scostamento genera un'azione correttiva tracciata.",
+  "centro": {
+    "nome": "CRRVEQ - Centro Regionale di Riferimento per la Valutazione Esterna di Qualità",
+    "ente": "Azienda Ospedaliero-Universitaria Careggi, S.O.D. Sicurezza e Qualità in Laboratorio",
+    "descrizione": "Istituito nel 1989 dalla Regione Toscana per gestire i programmi di VEQ dei laboratori toscani; struttura certificata UNI EN ISO 9001:2015, con programmi accreditati ISO/IEC 17043 (provider di prove valutative). Direttore: dott.ssa Paola Pezzati.",
+    "indirizzo": "Padiglione 69/A, Largo Brambilla 3, 50134 Firenze",
+    "telefono": "055 7947907",
+    "email": "crrveq@aou-careggi.toscana.it",
+    "sito": "https://crrveq.aou-careggi.toscana.it"
+  },
+  "ciclo": "2026",
+  "contratto_pdf": "CRRVEQ - Contratto di adesione ciclo 2026 - Toscana Diagnostica.pdf",
+  "note_ciclo": "Adesione al ciclo 2026 (contratto M/1481/03 rev. 25). Gli esercizi iniziano a febbraio; la partecipazione al ciclo completo dà diritto all'attestato di partecipazione a fine anno. È stata richiesta l'integrazione del programma di Anatomia Patologica.",
+  "programmi": [
+    {"nome": "Chimica clinica", "area": "Chimica clinica e biochimica", "accreditato": true},
+    {"nome": "Biochimica urina", "area": "Chimica clinica e biochimica", "accreditato": true},
+    {"nome": "Esame chimico-fisico urine", "area": "Chimica clinica e biochimica", "accreditato": false},
+    {"nome": "Proteine specifiche", "area": "Chimica clinica e biochimica", "accreditato": true},
+    {"nome": "Elettroforesi (interpretazione tracciati)", "area": "Chimica clinica e biochimica", "accreditato": false},
+    {"nome": "Ormoni e marcatori tumorali", "area": "Chimica clinica e biochimica", "accreditato": true},
+    {"nome": "Marcatori cardiaci", "area": "Chimica clinica e biochimica", "accreditato": true},
+    {"nome": "Peptidi natriuretici", "area": "Chimica clinica e biochimica", "accreditato": true},
+    {"nome": "Procalcitonina", "area": "Chimica clinica e biochimica", "accreditato": true},
+    {"nome": "Emoglobina glicata (HbA1c)", "area": "Chimica clinica e biochimica", "accreditato": true},
+    {"nome": "Ematologia", "area": "Ematologia e coagulazione", "accreditato": true},
+    {"nome": "Coagulazione 1", "area": "Ematologia e coagulazione", "accreditato": true},
+    {"nome": "V.E.S.", "area": "Ematologia e coagulazione", "accreditato": false},
+    {"nome": "Immunoematologia", "area": "Ematologia e coagulazione", "accreditato": false},
+    {"nome": "Autoimmunità", "area": "Sierologia e immunologia", "accreditato": false},
+    {"nome": "Sieroimmunologia virologica 1 (HAV, HCV, HIV, HBV)", "area": "Sierologia e immunologia", "accreditato": false},
+    {"nome": "Sieroimmunologia virologica 3 (Lue)", "area": "Sierologia e immunologia", "accreditato": false},
+    {"nome": "Batteriologia", "area": "Microbiologia e biologia molecolare", "accreditato": true},
+    {"nome": "Biologia molecolare (virologica)", "area": "Microbiologia e biologia molecolare", "accreditato": false},
+    {"nome": "HPV-HR di screening", "area": "Microbiologia e biologia molecolare", "accreditato": false},
+    {"nome": "Droghe (screening)", "area": "Tossicologia", "accreditato": false},
+    {"nome": "Sangue occulto", "area": "Altre aree", "accreditato": true},
+    {"nome": "PAP test in fase liquida", "area": "Altre aree", "accreditato": true}
+  ],
+  "documenti_sgi": ["TD-SGI-PRO045", "TD-SGI-PRO046", "TD-SGI-PRO082", "TD-SGI-MOD186", "TD-SGI-PRO073", "TD-SGI-PRO077"]
+}

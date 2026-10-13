@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#01212C">
+<meta name="description" content="Portale Service di Laboratorio di Toscana Diagnostica: preparazioni agli esami, moduli di richiesta e consenso, procedure e istruzioni di laboratorio, certificazioni, VEQ e contatti.">
+<title>Service di Laboratorio · Toscana Diagnostica</title>
+<link rel="icon" type="image/png" href="/static/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+<div class="shell">
+  <aside class="side" id="side"></aside>
+  <main class="main">
+    <div class="topbar" id="topbar"></div>
+    <div class="page">
+      <div class="hero">
+        <h1>Service di Laboratorio</h1>
+        <div class="sub">Tutto ciò che serve ai laboratori e alle strutture che affidano a Toscana Diagnostica le proprie analisi: istruzioni di preparazione per i pazienti, moduli di richiesta e di consenso, procedure e istruzioni di lavoro del laboratorio. Sempre nella revisione in vigore.</div>
+        <div class="searchbox" id="sb"><input type="text" id="searchInput" placeholder="Cerca una prestazione (es. ECO003, curva glicemica) o un documento (es. valori critici, trasporto campioni, consenso)…" autocomplete="off" autofocus><button class="iconbtn clear" id="searchClear" title="Cancella" aria-label="Cancella ricerca"></button></div>
+        <div class="pills" id="pills"></div>
+      </div>
+
+      <div id="notice"></div>
+      <div class="grid g4" id="kpis"></div>
+
+      <div class="card mt" id="prepSection">
+        <div class="hd"><h2 id="prepTitle">Prestazioni e preparazione</h2><span class="spacer"></span><label class="f" style="flex:0 1 240px;font-size:11.5px">Gruppo<select id="gruppoSelect"><option value="all">Tutti i gruppi</option></select></label><span class="badge b-teal" id="prepCount">0</span></div>
+        <div class="bd flush table-wrap"><table class="t"><thead><tr><th>Codice</th><th>Prestazione</th><th>Preparazione</th><th>Link stabile</th></tr></thead><tbody id="prepList"></tbody></table></div>
+        <div id="prepMore"></div>
+      </div>
+
+      <div class="card mt" id="docSection">
+        <div class="hd"><h2 id="docTitle">Documentazione del laboratorio</h2><span class="spacer"></span><span class="badge b-teal" id="docCount">0</span><button class="btn sm ghost" id="resetBtn" title="Annulla filtri e ricerca">Azzera</button></div>
+        <div class="bd" style="padding-bottom:8px">
+          <div class="filters" style="margin-bottom:8px">
+            <label class="f" style="flex:0 1 300px">Area<select id="areaSelect"></select></label>
+            <div class="f" style="flex:1 1 400px">Tipologia<div class="seg" id="famSeg"></div></div>
+          </div>
+          <span class="help" id="searchStats"></span>
+        </div>
+        <div class="bd flush table-wrap"><table class="t"><thead><tr><th>Codice</th><th>Documento</th><th>Area</th><th>Rev. · data</th><th class="num">Apri</th></tr></thead><tbody id="docList"></tbody></table></div>
+        <div id="docMore"></div>
+      </div>
+
+      <div class="card mt" id="infGrid">
+        <div class="hd"><h2>Istruzioni di preparazione per il paziente</h2><span class="spacer"></span><span class="help">versioni stampabili, senza frontespizio: da consegnare o inviare al paziente</span></div>
+        <div class="bd"><div class="tiles" id="prepTiles"></div></div>
+      </div>
+
+      <div class="card mt" id="linksCard">
+        <div class="hd"><h2>Link stabili e invio</h2></div>
+        <div class="bd small muted">Ogni documento ha un indirizzo che non cambia con la revisione: <span class="chip">/p/&lt;codice prestazione&gt;</span> (es. /p/ECO003) apre la preparazione della prestazione, <span class="chip">/m/TD-SGI-XXXNNN</span> la versione stampabile di un modulo o informativa, <span class="chip">/doc/TD-SGI-XXXNNN</span> il PDF corrente di un documento. Il pulsante con la busta apre il tuo programma di posta con i link già scritti; quello con la catena copia il link come collegamento cliccabile, da incollare nel gestionale, in una e-mail o in un SMS al paziente.</div>
+      </div>
+
+      <footer class="foot" id="footer"></footer>
+    </div>
+  </main>
+</div>
+<script src="/static/shell.js"></script>
+<script src="/static/app.js"></script>
+</body>
+</html>

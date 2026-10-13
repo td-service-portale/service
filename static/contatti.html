@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#01212C">
+<meta name="description" content="Contatti di Toscana Diagnostica per i laboratori e le strutture clienti del Service di Laboratorio.">
+<title>Contatti · Toscana Diagnostica Service</title>
+<link rel="icon" type="image/png" href="/static/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+<div class="shell">
+  <aside class="side" id="side"></aside>
+  <main class="main">
+    <div class="topbar" id="topbar"></div>
+    <div class="page">
+      <div class="page-head">
+        <div>
+          <h1>Contatti</h1>
+          <div class="sub">Per campioni, richieste, referti e preparazioni il riferimento è il Laboratorio di Analisi. Gli altri contatti servono per gli aspetti sanitari, operativi, contrattuali e amministrativi del rapporto di service.</div>
+        </div>
+      </div>
+      <div id="gruppi"></div>
+      <div class="card mt">
+        <div class="hd"><h2>Toscana Diagnostica S.r.l.</h2></div>
+        <div class="bd prose" id="azienda"></div>
+      </div>
+      <footer class="foot" id="footer"></footer>
+    </div>
+  </main>
+</div>
+<script src="/static/shell.js"></script>
+<script>
+(function () {
+  const { icon, esc, shell, footer } = window.SGI;
+  const $ = id => document.getElementById(id);
+  const tel = t => 'tel:+39' + t.replace(/\s+/g, '');
+  Promise.all([fetch('/data/contatti.json').then(r => r.json()), fetch('/api/meta').then(r => r.json())]).then(([C, m]) => {
+    shell({ page: 'contatti', meta: m, aree: null, shortcuts: [] });
+    footer(m);
+    $('gruppi').innerHTML = C.gruppi.map(g => `
+      <h3 style="margin:18px 0 4px">${esc(g.titolo)}</h3>
+      <div class="small muted" style="margin-bottom:10px">${esc(g.sub)}</div>
+      <div class="grid g3">${g.contatti.map(c => `
+        <div class="card contact${c.primario ? ' primary' : ''}"><div class="bd">
+          <div class="ruolo">${esc(c.ruolo)}</div>
+          ${c.nome ? `<div class="nome">${esc(c.nome)}</div>` : `<div class="nome">Toscana Diagnostica</div>`}
+          <div style="margin-top:8px;display:flex;flex-direction:column;gap:5px">
+            ${c.email ? `<a href="mailto:${esc(c.email)}">${icon('mail')}${esc(c.email)}</a>` : ''}
+            ${c.tel ? `<a href="${tel(c.tel)}">${icon('phone')}${esc(c.tel)}</a>` : ''}
+            ${c.cell ? `<a href="${tel(c.cell)}">${icon('phone')}${esc(c.cell)} <span class="small muted">cellulare</span></a>` : ''}
+          </div>
+        </div></div>`).join('')}</div>`).join('');
+    const a = C.azienda;
+    $('azienda').innerHTML = `<p>${icon('pin', 15)} <strong>Sede operativa e laboratorio:</strong> ${esc(a.sede_operativa)}<br>${icon('pin', 15)} <strong>Sede legale:</strong> ${esc(a.sede_legale)}</p><p class="muted">P. IVA e C.F. ${esc(a.piva)} · PEC <a href="mailto:${esc(a.pec)}">${esc(a.pec)}</a> · <a href="${esc(a.sito)}" target="_blank" rel="noopener">${esc(a.sito.replace('https://', ''))}</a></p><p><a class="btn ghost sm" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(a.sede_operativa)}" target="_blank" rel="noopener">${icon('map', 14)} Apri in Google Maps</a></p>`;
+  });
+})();
+</script>
+</body>
+</html>

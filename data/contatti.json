@@ -1,0 +1,38 @@
+{
+  "azienda": {
+    "ragione_sociale": "Toscana Diagnostica S.r.l.",
+    "sede_operativa": "Via di Pratignone 13/4, 50019 Sesto Fiorentino (FI)",
+    "sede_legale": "Viale Belfiore 55, 50144 Firenze",
+    "piva": "07528130482",
+    "pec": "toscanadiagnostica@pec.it",
+    "sito": "https://www.toscanadiagnostica.it"
+  },
+  "gruppi": [
+    {
+      "titolo": "Laboratorio di Analisi",
+      "sub": "Il primo contatto per campioni, richieste, referti e preparazioni",
+      "contatti": [
+        {"ruolo": "Laboratorio di Analisi", "nome": "", "email": "laboratorio@toscanadiagnostica.it", "tel": "055 7765102", "primario": true},
+        {"ruolo": "Direttore Tecnico del Laboratorio", "nome": "dott.ssa Maria Teresa Balzano", "email": "mariateresa.balzano@toscanadiagnostica.it", "tel": "055 7765102"},
+        {"ruolo": "Lab Operations Manager", "nome": "dott.ssa Sara Arrighetti", "email": "sara.arrighetti@toscanadiagnostica.it", "tel": "055 7765102"}
+      ]
+    },
+    {
+      "titolo": "Direzione",
+      "sub": "Direzione sanitaria e operativa",
+      "contatti": [
+        {"ruolo": "Direttore Sanitario", "nome": "prof. Gian Luigi Taddei", "email": "direzionesanitaria@toscanadiagnostica.it", "tel": ""},
+        {"ruolo": "Chief Operating Officer", "nome": "dott.ssa Valentina Zezza", "email": "valentina.zezza@toscanadiagnostica.it", "tel": "055 7765103"},
+        {"ruolo": "Chief Executive Officer", "nome": "Francesco Epifani", "email": "francesco.epifani@toscanadiagnostica.it", "tel": "055 7765101", "cell": "393 5879824"}
+      ]
+    },
+    {
+      "titolo": "Amministrazione",
+      "sub": "Contratti, fatturazione, pagamenti",
+      "contatti": [
+        {"ruolo": "Amministrazione", "nome": "", "email": "amministrazione@toscanadiagnostica.it", "tel": "055 7765104"},
+        {"ruolo": "Chief Financial Officer", "nome": "Vincenzo Malenchini", "email": "vincenzo.malenchini@toscanadiagnostica.it", "tel": ""}
+      ]
+    }
+  ]
+}
