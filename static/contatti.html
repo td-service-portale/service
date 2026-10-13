@@ -56,7 +56,7 @@
           </div>
         </div></div>`).join('')}</div>`).join('');
     const a = C.azienda;
-    $('azienda').innerHTML = `<p>${icon('pin', 15)} <strong>Sede operativa e laboratorio:</strong> ${esc(a.sede_operativa)}<br>${icon('pin', 15)} <strong>Sede legale:</strong> ${esc(a.sede_legale)}</p><p class="muted">P. IVA e C.F. ${esc(a.piva)} · PEC <a href="mailto:${esc(a.pec)}">${esc(a.pec)}</a> · <a href="${esc(a.sito)}" target="_blank" rel="noopener">${esc(a.sito.replace('https://', ''))}</a></p><p><a class="btn ghost sm" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(a.sede_operativa)}" target="_blank" rel="noopener">${icon('map', 14)} Apri in Google Maps</a></p>`;
+    $('azienda').innerHTML = `<p>${a.sede_legale === a.sede_operativa ? `${icon('pin', 15)} <strong>Sede legale, operativa e laboratorio:</strong> ${esc(a.sede_operativa)}` : `${icon('pin', 15)} <strong>Sede operativa e laboratorio:</strong> ${esc(a.sede_operativa)}<br>${icon('pin', 15)} <strong>Sede legale:</strong> ${esc(a.sede_legale)}`}</p><p class="muted">P. IVA e C.F. ${esc(a.piva)} · PEC <a href="mailto:${esc(a.pec)}">${esc(a.pec)}</a> · <a href="${esc(a.sito)}" target="_blank" rel="noopener">${esc(a.sito.replace('https://', ''))}</a></p><p><a class="btn ghost sm" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(a.sede_operativa)}" target="_blank" rel="noopener">${icon('map', 14)} Apri in Google Maps</a></p>`;
   });
 })();
 </script>

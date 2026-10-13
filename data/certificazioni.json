@@ -8,7 +8,8 @@
     "settore_iaf": "38 - Sanità e servizi sociali"
   },
   "sedi": {
-    "legale": "Viale Belfiore 55, 50144 Firenze",
+    "nota": "Sedi come riportate sui certificati EuCI del 04/09/2026",
+    "legale": "Viale Belfiore 55, 50144 Firenze (sede legale indicata sul certificato)",
     "operativa": "Via di Pratignone 13/4, 50019 Sesto Fiorentino (FI)"
   },
   "campo": "Erogazione di prestazioni sanitarie, in regime ambulatoriale, nell'ambito della Diagnostica di Laboratorio (indagini diagnostiche nelle discipline Patologia Clinica, Biochimica Clinica, Microbiologia e Virologia e Genetica Medica), Diagnostica per Immagini (radiologia digitale, mammografia, ortopantomografia, mineralometria ossea MOC, TAC, Risonanza Magnetica, ecografia, elettromiografia), Endoscopia (con o senza sedazione profonda), Medicina Fisica e Riabilitazione, Medicina Specialistica e Medicina del Lavoro.",

@@ -52,7 +52,7 @@
       <div class="card kpi accent"><div class="lbl">Norme del Sistema di Gestione Integrato</div><div class="val">${C.certificazioni.length}</div><div class="foot">qualità, sicurezza, ambiente, anticorruzione, sanità, sociale, informazioni, inclusione, parità</div></div>
       <div class="card kpi"><div class="lbl">Certificati scaricabili</div><div class="val">${emessi.length}</div><div class="foot">emessi il ${esc(emessi[0].prima_emissione)} · validità triennale</div></div>
       <div class="card kpi"><div class="lbl">Organismo di certificazione</div><div class="val" style="font-size:20px">EuCI</div><div class="foot">accreditato ESYD n. 831 · settore IAF 38</div></div>
-      <div class="card kpi"><div class="lbl">Sedi certificate</div><div class="val" style="font-size:20px">2</div><div class="foot">sede legale Firenze · unità operativa Sesto Fiorentino</div></div>`;
+      <div class="card kpi"><div class="lbl">Sedi certificate</div><div class="val" style="font-size:20px">2</div><div class="foot">unità operativa Sesto Fiorentino · sede legale come da certificato</div></div>`;
     $('certs').innerHTML = C.certificazioni.map(c => `
       <div class="card"><div class="bd cert">
         ${c.logo ? `<img src="/static/${esc(c.logo)}" alt="Logo certificazione ${esc(c.norma)}">` : `<div class="nologo">${esc(c.norma)}</div>`}
@@ -64,7 +64,7 @@
           <div class="actions"><a class="btn sm" href="${encodeURI('/certificati/' + c.pdf)}" target="_blank">${icon('doc', 14)} Apri il certificato</a><a class="btn sm ghost" href="${esc(C.organismo.verifica)}" target="_blank" rel="noopener">Verifica validità su EuCI</a></div>` : ''}
         </div>
       </div></div>`).join('');
-    $('campo').innerHTML = `<p>${esc(C.campo)}</p><p class="small muted">Sede legale: ${esc(C.sedi.legale)} · Unità operativa: ${esc(C.sedi.operativa)} · Settore IAF ${esc(C.organismo.settore_iaf)}</p>`;
+    $('campo').innerHTML = `<p>${esc(C.campo)}</p><p class="small muted">${esc(C.sedi.nota)}: ${esc(C.sedi.legale)} · unità operativa ${esc(C.sedi.operativa)} · Settore IAF ${esc(C.organismo.settore_iaf)}</p>`;
     $('altri').innerHTML = C.altri_requisiti.map(a => `<div class="card"><div class="hd"><h2>${esc(a.titolo)}</h2></div><div class="bd"><p style="margin:0 0 ${a.pdf ? '10px' : '0'}" class="muted">${esc(a.testo)}</p>${a.pdf ? `<a class="btn sm" href="${encodeURI('/certificati/' + a.pdf)}" target="_blank">${icon('doc', 14)} Apri il documento</a>` : ''}</div></div>`).join('');
     $('organismo').innerHTML = `<p><strong>${esc(C.organismo.nome)}</strong> · ${esc(C.organismo.sede)}</p><p class="muted">${esc(C.organismo.accreditamento)}</p><p class="small muted">La validità di ogni certificato è verificabile tramite il QR code stampato sul certificato o su <a href="${esc(C.organismo.verifica)}" target="_blank" rel="noopener">${esc(C.organismo.verifica.replace('https://', ''))}</a>.</p>`;
   });

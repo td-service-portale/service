@@ -1,14 +1,46 @@
 {
-  "_nota": "Voci di menu esterne o 'statiche'. href vuoto = la voce apre la pagina segnaposto /in-allestimento/<id> finche' non viene fornito il link definitivo. blank=true apre in una nuova scheda.",
-  "voci": [
-    {"id": "circolari", "label": "Circolari e aggiornamenti operativi", "icon": "list", "href": "", "blank": true,
-     "descrizione": "Le comunicazioni operative del laboratorio ai clienti Service: variazioni di metodo, tempi di refertazione, calendario festività, modulistica aggiornata."},
-    {"id": "ordine-materiale", "label": "Ordine del materiale", "icon": "folder", "href": "", "blank": true,
-     "descrizione": "Richiesta di provette, contenitori, buste di trasporto e modulistica. Nel frattempo è disponibile il modulo TD-SGI-MOD252 (Richiesta di Approvvigionamento Materiale) da inviare a laboratorio@toscanadiagnostica.it.",
-     "modulo": "TD-SGI-MOD252"},
-    {"id": "promozioni", "label": "Check-up e promozioni mensili", "icon": "star", "href": "", "blank": true,
-     "descrizione": "I pacchetti check-up e le promozioni del mese riservate ai pazienti dei laboratori clienti."},
-    {"id": "portale-nc", "label": "Portale NC", "icon": "shield", "href": "https://nc.toscanadiagnostica.it/", "blank": true,
-     "descrizione": "Portale per la segnalazione delle non conformità."}
-  ]
+ "_nota": "Voci di menu esterne o 'statiche'. href vuoto = la voce apre la pagina segnaposto /in-allestimento/<id> finche' non viene fornito il link definitivo. blank=true apre in una nuova scheda.",
+ "voci": [
+  {
+   "id": "vademecum",
+   "label": "Vademecum",
+   "icon": "book",
+   "href": "",
+   "blank": true,
+   "descrizione": "La guida operativa per i laboratori clienti: come preparare, confezionare e inviare i campioni, tempi, modulistica, contatti."
+  },
+  {
+   "id": "circolari",
+   "label": "Circolari e aggiornamenti operativi",
+   "icon": "list",
+   "href": "",
+   "blank": true,
+   "descrizione": "Le comunicazioni operative del laboratorio ai clienti Service: variazioni di metodo, tempi di refertazione, calendario festività, modulistica aggiornata."
+  },
+  {
+   "id": "ordine-materiale",
+   "label": "Ordine del materiale",
+   "icon": "folder",
+   "href": "",
+   "blank": true,
+   "descrizione": "Richiesta di provette, contenitori, buste di trasporto e modulistica. Nel frattempo è disponibile il modulo TD-SGI-MOD252 (Richiesta di Approvvigionamento Materiale) da inviare a laboratorio@toscanadiagnostica.it.",
+   "modulo": "TD-SGI-MOD252"
+  },
+  {
+   "id": "promozioni",
+   "label": "Check-up e promozioni mensili",
+   "icon": "star",
+   "href": "",
+   "blank": true,
+   "descrizione": "I pacchetti check-up e le promozioni del mese riservate ai pazienti dei laboratori clienti."
+  },
+  {
+   "id": "portale-nc",
+   "label": "Portale NC",
+   "icon": "shield",
+   "href": "https://nc.toscanadiagnostica.it/",
+   "blank": true,
+   "descrizione": "Portale per la segnalazione delle non conformità."
+  }
+ ]
 }
