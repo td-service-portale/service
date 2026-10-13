@@ -5,7 +5,12 @@
     "titolo": "Iscriviti alla newsletter di Agorà",
     "testo": "Un messaggio al mese, solo quando abbiamo qualcosa da dire: nuovi articoli, aggiornamenti operativi, novità del laboratorio. Nessuna pubblicità, cancellazione in un clic.",
     "brevo_url": "https://7810e5f0.sibforms.com/v2/serve/MUIFAG_6keucYOACGNmeDmCvuR0M7uR1peVTghEJCdUBsi34lEF2NV2bJf9HbVOp91u-1TGa-xJG_88R8Ie2bQx2d2L_bhnHjiaVFG9zuO93-YcOwV1tZF69YqNJxhwp6v2snvLCx-oKrOQhK0FSBJ0yKsQ8PDpjmHKLEzVLtDd2xrAhyH0OXr6gGhL1wcKX2vBD2SQqQ7jTo0hKRg==",
-    "fallback_email": "service@toscanadiagnostica.it"
+    "fallback_email": "service@toscanadiagnostica.it",
+    "brevo_action": "https://7810e5f0.sibforms.com/serve/MUIFAG_6keucYOACGNmeDmCvuR0M7uR1peVTghEJCdUBsi34lEF2NV2bJf9HbVOp91u-1TGa-xJG_88R8Ie2bQx2d2L_bhnHjiaVFG9zuO93-YcOwV1tZF69YqNJxhwp6v2snvLCx-oKrOQhK0FSBJ0yKsQ8PDpjmHKLEzVLtDd2xrAhyH0OXr6gGhL1wcKX2vBD2SQqQ7jTo0hKRg==",
+    "privacy_url": "https://www.toscanadiagnostica.it/documents/Privacy-Cookie-Policy.pdf",
+    "consenso": "Ho letto l'Informativa Privacy e acconsento a ricevere la newsletter di Toscana Diagnostica.",
+    "grazie": "Grazie. Se la tua iscrizione richiede conferma, trovi un messaggio nella casella di posta: basta un clic.",
+    "_nota": "brevo_action = URL del form Brevo (quello nell'attributo action del codice HTML, senza /v2/); brevo_url (iframe) usato solo se brevo_action manca."
   },
   "post": [
     {

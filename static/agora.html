@@ -21,13 +21,25 @@
 .article .byline .av { width: 34px; height: 34px; border-radius: 50%; background: var(--teal); color: #fff; font-weight: 800; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; }
 .article .body p { font-size: 16px; line-height: 1.7; margin: 0 0 16px; color: #1b2f36; }
 .article .body p:first-child::first-letter { font-size: 2.6em; font-weight: 800; color: var(--teal); float: left; line-height: .85; padding: 4px 8px 0 0; }
-.newsletter { background: linear-gradient(135deg, var(--jet), var(--teal)); color: #fff; border-radius: var(--radius); padding: 24px 26px; display: grid; grid-template-columns: 1fr auto; gap: 18px; align-items: center; }
-.newsletter h2 { color: #fff; font-size: 18px; }
-.newsletter p { color: #cfe3e7; margin: 6px 0 0; max-width: 620px; }
-.newsletter .btn { background: var(--silk); color: var(--jet); }
-.newsletter .btn:hover { background: #fff; }
+.newsletter { background: linear-gradient(135deg, var(--jet), var(--teal)); color: #fff; border-radius: var(--radius); padding: 26px 28px; display: grid; grid-template-columns: 1.1fr 1fr; gap: 24px; align-items: center; }
+.newsletter h2 { color: #fff; font-size: 19px; }
+.newsletter p { color: #cfe3e7; margin: 6px 0 0; max-width: 520px; font-size: 14px; }
+.nlf { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.18); border-radius: 12px; padding: 16px; }
+.nlf .row1 { display: flex; gap: 8px; }
+.nlf input[type=email] { flex: 1; min-height: 44px; border: 0; border-radius: 9px; padding: 0 14px; font-size: 15px; background: #fff; color: var(--ink); }
+.nlf input[type=email]:focus { box-shadow: 0 0 0 3px rgba(222,192,241,.6); }
+.nlf .btn { background: var(--silk); color: var(--jet); min-height: 44px; padding: 0 18px; border-radius: 9px; }
+.nlf .btn:hover { background: #fff; }
+.nlf .btn[disabled] { opacity: .6; cursor: wait; }
+.nlf label.ck { display: flex; gap: 10px; align-items: flex-start; margin-top: 12px; font-size: 12.5px; color: #dbe9ec; cursor: pointer; line-height: 1.4; }
+.nlf label.ck input { width: 17px; height: 17px; min-height: 0; margin: 1px 0 0; accent-color: var(--mauve); flex: none; }
+.nlf label.ck a { color: var(--silk); text-decoration: underline; }
+.nlf .msg { margin-top: 10px; font-size: 13px; font-weight: 650; display: none; }
+.nlf .msg.ok { display: block; color: var(--silk); }
+.nlf .msg.err { display: block; color: #ffd0cb; }
+.nlf .hp { position: absolute; left: -9999px; opacity: 0; height: 0; }
 .newsletter iframe { width: 100%; max-width: 560px; border: 0; height: 320px; background: #fff; border-radius: 10px; grid-column: 1 / -1; justify-self: center; }
-@media (max-width: 860px) { .newsletter { grid-template-columns: 1fr; } .article h1 { font-size: 24px; } }
+@media (max-width: 860px) { .newsletter { grid-template-columns: 1fr; } .article h1 { font-size: 24px; } .nlf .row1 { flex-direction: column; } }
 </style>
 </head>
 <body>
@@ -75,11 +87,42 @@
         </div>`;
     }
     const N = B.newsletter || {};
+    const consenso = (N.consenso || "Ho letto l'Informativa Privacy e acconsento a ricevere la newsletter.").replace("Informativa Privacy", `<a href="${esc(N.privacy_url || '#')}" target="_blank" rel="noopener">Informativa Privacy</a>`);
     $('newsletter').innerHTML = `<div class="newsletter">
       <div><h2>${esc(N.titolo || 'Newsletter')}</h2><p>${esc(N.testo || '')}</p></div>
-      ${N.brevo_url ? `<iframe src="${esc(N.brevo_url)}" title="Iscrizione newsletter" loading="lazy" scrolling="auto"></iframe>` :
-        `<a class="btn" href="mailto:${esc(N.fallback_email || 'service@toscanadiagnostica.it')}?subject=${encodeURIComponent('Iscrizione newsletter Agorà')}&body=${encodeURIComponent('Desidero iscrivermi alla newsletter di Agorà.\\nNome e cognome:\\nLaboratorio / struttura:\\nE-mail:')}">${icon('mail', 16)} Iscriviti</a>`}
+      ${N.brevo_action ? `
+      <form class="nlf" id="nlf" novalidate>
+        <div class="row1"><input type="email" name="EMAIL" id="nlEmail" placeholder="La tua e-mail" autocomplete="email" required><button class="btn" type="submit" id="nlBtn">Iscriviti</button></div>
+        <label class="ck"><input type="checkbox" id="nlOk" name="CONSENSO_PRIVACY" value="1"><span>${consenso}</span></label>
+        <input class="hp" type="text" name="email_address_check" value="" tabindex="-1" autocomplete="off"><input type="hidden" name="locale" value="it">
+        <div class="msg" id="nlMsg"></div>
+      </form>` : N.brevo_url ? `<iframe src="${esc(N.brevo_url)}" title="Iscrizione newsletter" loading="lazy" scrolling="auto"></iframe>` :
+        `<a class="btn" href="mailto:${esc(N.fallback_email || 'service@toscanadiagnostica.it')}?subject=${encodeURIComponent('Iscrizione newsletter Agorà')}">${icon('mail', 16)} Iscriviti</a>`}
     </div>`;
+    const f = $('nlf');
+    if (f) f.addEventListener('submit', async e => {
+      e.preventDefault();
+      const email = $('nlEmail').value.trim(), msg = $('nlMsg'), btn = $('nlBtn');
+      const show = (t, ok) => { msg.textContent = t; msg.className = 'msg ' + (ok ? 'ok' : 'err'); };
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return show('Inserisci un indirizzo e-mail valido.', false);
+      if (!$('nlOk').checked) return show("Per iscriverti devi accettare l'Informativa Privacy.", false);
+      btn.disabled = true; btn.textContent = 'Invio…';
+      const fd = new FormData(f);
+      try {
+        const r = await fetch(N.brevo_action + '?isAjax=1', { method: 'POST', body: fd, headers: { 'Accept': 'application/json' } });
+        const j = await r.json().catch(() => ({}));
+        if (r.ok && (j.success || j.success === undefined)) { show(N.grazie || 'Grazie, iscrizione registrata.', true); f.reset(); }
+        else show((j.errors && (Object.values(j.errors)[0] || [])[0]) || j.message || 'Iscrizione non riuscita, riprova tra qualche minuto.', false);
+      } catch (err) {
+        /* rete o CORS: invio classico verso un frame nascosto, che Brevo accetta sempre */
+        const ifr = document.createElement('iframe'); ifr.name = 'nlTarget'; ifr.style.display = 'none'; document.body.appendChild(ifr);
+        const g = document.createElement('form'); g.method = 'POST'; g.action = N.brevo_action; g.target = 'nlTarget'; g.style.display = 'none';
+        for (const [k, v] of fd.entries()) { const i = document.createElement('input'); i.type = 'hidden'; i.name = k; i.value = v; g.appendChild(i); }
+        document.body.appendChild(g); g.submit();
+        show(N.grazie || 'Grazie, iscrizione registrata.', true); f.reset();
+      }
+      btn.disabled = false; btn.textContent = 'Iscriviti';
+    });
   });
 })();
 </script>
