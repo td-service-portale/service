@@ -26,7 +26,7 @@
 .newsletter p { color: #cfe3e7; margin: 6px 0 0; max-width: 620px; }
 .newsletter .btn { background: var(--silk); color: var(--jet); }
 .newsletter .btn:hover { background: #fff; }
-.newsletter iframe { width: 100%; max-width: 640px; border: 0; min-height: 360px; background: #fff; border-radius: 10px; grid-column: 1 / -1; }
+.newsletter iframe { width: 100%; max-width: 560px; border: 0; height: 320px; background: #fff; border-radius: 10px; grid-column: 1 / -1; justify-self: center; }
 @media (max-width: 860px) { .newsletter { grid-template-columns: 1fr; } .article h1 { font-size: 24px; } }
 </style>
 </head>
@@ -77,7 +77,7 @@
     const N = B.newsletter || {};
     $('newsletter').innerHTML = `<div class="newsletter">
       <div><h2>${esc(N.titolo || 'Newsletter')}</h2><p>${esc(N.testo || '')}</p></div>
-      ${N.brevo_url ? `<iframe src="${esc(N.brevo_url)}" title="Iscrizione newsletter" loading="lazy"></iframe>` :
+      ${N.brevo_url ? `<iframe src="${esc(N.brevo_url)}" title="Iscrizione newsletter" loading="lazy" scrolling="auto"></iframe>` :
         `<a class="btn" href="mailto:${esc(N.fallback_email || 'service@toscanadiagnostica.it')}?subject=${encodeURIComponent('Iscrizione newsletter Agorà')}&body=${encodeURIComponent('Desidero iscrivermi alla newsletter di Agorà.\\nNome e cognome:\\nLaboratorio / struttura:\\nE-mail:')}">${icon('mail', 16)} Iscriviti</a>`}
     </div>`;
   });
