@@ -5,7 +5,9 @@ Sito pubblico dedicato ai laboratori e alle strutture clienti del Service di Lab
 1. **Preparazioni e documenti** (`/`): tutte le prestazioni GIPO con la preparazione collegata (link stabile `/p/<codice shortcut>`), le istruzioni di preparazione per il paziente in versione stampabile, e la documentazione del laboratorio (procedure, istruzioni di lavoro, manuali, registri, moduli, informative, documenti esterni) con ricerca full-text sul testo dei PDF.
 2. **Certificazioni di qualità** (`/certificazioni`): le norme del Sistema di Gestione Integrato, i certificati EuCI scaricabili (ISO 9001, 14001, 45001, 37001), campo di applicazione, accreditamento SSR, autorizzazione sanitaria, Politica Integrata.
 3. **VEQ** (`/veq`): cos'è la Valutazione Esterna di Qualità, il CRRVEQ Careggi, i 23 programmi del ciclo 2026, le procedure SGI collegate, il contratto di adesione.
-4. **Contatti** (`/contatti`).
+4. **Agorà** (`/agora`, `/agora/<slug>`): il blog. Articoli in `data/blog.json` (titolo, slug, data, autore, sommario, paragrafi); in fondo il box newsletter: con `newsletter.brevo_url` valorizzato mostra il form Brevo in iframe, altrimenti un pulsante mailto a `fallback_email`.
+5. **Servizi** (voci configurabili in `data/menu.json`): Circolari e aggiornamenti operativi, Ordine del materiale, Check-up e promozioni mensili (per ora senza link: aprono la pagina segnaposto `/in-allestimento/<id>`; quando `href` viene valorizzato il menu punta direttamente al link, in nuova scheda se `blank` è true), Portale NC (https://nc.toscanadiagnostica.it, nuova scheda).
+6. **Contatti** (`/contatti`), da `data/contatti.json`.
 
 ## Perimetro documentale (decisione AD 13/10/2026)
 
@@ -23,9 +25,11 @@ data/docs.json, fulltext.json, preparazioni.json, meta.json   generati dal build
 data/certificazioni.json    REDAZIONALE: certificazioni (numero, date, PDF, logo, testi)
 data/veq.json               REDAZIONALE: programmi VEQ del ciclo, centro, testi
 data/contatti.json          REDAZIONALE: contatti
+data/blog.json              REDAZIONALE: articoli di Agora' e newsletter (Brevo)
+data/menu.json              REDAZIONALE: voci di menu Servizi (link esterni o segnaposto)
 certificati/                PDF dei certificati, Politica Integrata, contratto di adesione CRRVEQ
 docs/<Area>/*.pdf, stampabili/*.pdf   generati dal build
-static/                     index.html + app.js (pagina 1), certificazioni.html, veq.html, contatti.html, shell.js, app.css, loghi
+static/                     index.html + app.js (pagina 1), certificazioni.html, veq.html, contatti.html, agora.html, in-allestimento.html, shell.js, app.css, loghi
 ```
 
 ## URL
@@ -36,7 +40,7 @@ static/                     index.html + app.js (pagina 1), certificazioni.html,
 | `/p/<codice shortcut>` (es. `/p/ECO003`) | PDF della preparazione della prestazione; se più di una, elenco. Codice GIPO numerico accettato come alias. `.pdf` forza il PDF |
 | `/m/TD-SGI-INF001` | versione stampabile corrente del modulo/informativa |
 | `/doc/TD-SGI-PRO042` | PDF corrente del documento |
-| `/certificazioni`, `/veq`, `/contatti` | pagine |
+| `/certificazioni`, `/veq`, `/contatti`, `/agora`, `/agora/<slug>`, `/in-allestimento/<id>` | pagine |
 | `/certificati/<file>.pdf`, `/docs/<area>/<file>.pdf`, `/stampabili/<file>.pdf` | file |
 | `/api/preparazioni`, `/api/meta`, `/data/*.json`, `/healthz` | dati |
 
@@ -52,4 +56,4 @@ I PDF sono consegnati direttamente sotto l'indirizzo richiesto (nessun redirect)
 
 Dal PC di Francesco, con il repo clonato e OneDrive sincronizzato: `build\aggiorna_service.bat`. Rilegge REG006 corrente, copia PDF e stampabili del perimetro, rigenera l'indice full-text e la mappa delle preparazioni, poi commit e push; Render ripubblica in 2-3 minuti. Il footer mostra revisione REG006 e data di pubblicazione.
 
-I tre file redazionali (`certificazioni.json`, `veq.json`, `contatti.json`) e la cartella `certificati/` si aggiornano a mano quando cambia un certificato, un ciclo VEQ o un contatto: basta modificare il JSON (e caricare il PDF) e rilanciare il batch, oppure caricare il file sul repo via web.
+I file redazionali (`certificazioni.json`, `veq.json`, `contatti.json`, `blog.json`, `menu.json`) e la cartella `certificati/` si aggiornano a mano quando cambia un certificato, un ciclo VEQ o un contatto: basta modificare il JSON (e caricare il PDF) e rilanciare il batch, oppure caricare il file sul repo via web.

@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#01212C">
+<meta name="robots" content="noindex">
+<title>Sezione in allestimento · Toscana Diagnostica Service</title>
+<link rel="icon" type="image/png" href="/static/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+<div class="shell">
+  <aside class="side" id="side"></aside>
+  <main class="main">
+    <div class="topbar" id="topbar"></div>
+    <div class="page">
+      <div id="content"></div>
+      <footer class="foot" id="footer"></footer>
+    </div>
+  </main>
+</div>
+<script src="/static/shell.js"></script>
+<script>
+(function () {
+  const { icon, esc, shell, footer } = window.SGI;
+  const $ = id => document.getElementById(id);
+  const id = (location.pathname.match(/^\/in-allestimento\/([^/]+)/) || [])[1];
+  Promise.all([window.SGI.menuReady, fetch('/api/meta').then(r => r.json())]).then(([menu, m]) => {
+    const v = (menu || []).find(x => x.id === id);
+    if (v && v.href) { location.replace(v.href); return; }
+    shell({ page: id, meta: m, aree: null, shortcuts: [] });
+    footer(m);
+    document.title = (v ? v.label : 'Sezione') + ' · Toscana Diagnostica Service';
+    $('content').innerHTML = `
+      <div class="page-head"><div><h1>${esc(v ? v.label : 'Sezione')}</h1><div class="sub">${esc(v ? v.descrizione || '' : '')}</div></div></div>
+      <div class="alert info">${icon('info', 18)}<div><strong>Sezione in allestimento.</strong> Sarà attiva a breve. Nel frattempo il Laboratorio di Analisi risponde a <a href="mailto:laboratorio@toscanadiagnostica.it">laboratorio@toscanadiagnostica.it</a> e allo 055 7765102, e il Service a <a href="mailto:service@toscanadiagnostica.it">service@toscanadiagnostica.it</a>.</div></div>
+      ${v && v.modulo ? `<div class="row"><a class="btn" href="/m/${esc(v.modulo)}" target="_blank">${icon('print', 15)} Apri il modulo ${esc(v.modulo)}</a><a class="btn ghost" href="/">Torna a Preparazioni e documenti</a></div>` : `<a class="btn ghost" href="/">Torna a Preparazioni e documenti</a>`}`;
+  });
+})();
+</script>
+</body>
+</html>

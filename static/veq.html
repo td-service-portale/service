@@ -62,7 +62,7 @@
 (function () {
   const { icon, esc, shell, footer } = window.SGI;
   const $ = id => document.getElementById(id);
-  Promise.all([fetch('/data/veq.json').then(r => r.json()), fetch('/api/meta').then(r => r.json()), fetch('/data/docs.json').then(r => r.json())]).then(([V, m, docs]) => {
+  Promise.all([window.SGI.menuReady, fetch('/data/veq.json').then(r => r.json()), fetch('/api/meta').then(r => r.json()), fetch('/data/docs.json').then(r => r.json())]).then(([_menu, V, m, docs]) => {
     shell({ page: 'veq', meta: m, aree: null, shortcuts: [
       { icon: 'link', label: 'Sito CRRVEQ Careggi', href: V.centro.sito, blank: true },
       V.contratto_pdf ? { icon: 'doc', label: 'Contratto di adesione ' + V.ciclo, href: encodeURI('/certificati/' + V.contratto_pdf), blank: true } : null,

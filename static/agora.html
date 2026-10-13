@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#01212C">
+<meta name="description" content="Agorà, il blog del Service di Laboratorio di Toscana Diagnostica: esperienze, opinioni e approfondimenti per chi fa diagnostica.">
+<title>Agorà · Toscana Diagnostica Service</title>
+<link rel="icon" type="image/png" href="/static/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/app.css">
+<style>
+.post-list .tile { padding: 18px 20px; }
+.post-list .tile .name { font-size: 17px; font-weight: 800; }
+.post-list .tile .sub { font-size: 13.5px; margin-top: 6px; }
+.post-list .meta { font-size: 12px; color: var(--muted); margin-top: 10px; }
+.article { max-width: 820px; }
+.article h1 { font-size: 30px; line-height: 1.2; }
+.article .byline { color: var(--muted); font-size: 13.5px; margin: 10px 0 22px; display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+.article .byline .av { width: 34px; height: 34px; border-radius: 50%; background: var(--teal); color: #fff; font-weight: 800; display: inline-flex; align-items: center; justify-content: center; font-size: 13px; }
+.article .body p { font-size: 16px; line-height: 1.7; margin: 0 0 16px; color: #1b2f36; }
+.article .body p:first-child::first-letter { font-size: 2.6em; font-weight: 800; color: var(--teal); float: left; line-height: .85; padding: 4px 8px 0 0; }
+.newsletter { background: linear-gradient(135deg, var(--jet), var(--teal)); color: #fff; border-radius: var(--radius); padding: 24px 26px; display: grid; grid-template-columns: 1fr auto; gap: 18px; align-items: center; }
+.newsletter h2 { color: #fff; font-size: 18px; }
+.newsletter p { color: #cfe3e7; margin: 6px 0 0; max-width: 620px; }
+.newsletter .btn { background: var(--silk); color: var(--jet); }
+.newsletter .btn:hover { background: #fff; }
+.newsletter iframe { width: 100%; max-width: 640px; border: 0; min-height: 360px; background: #fff; border-radius: 10px; grid-column: 1 / -1; }
+@media (max-width: 860px) { .newsletter { grid-template-columns: 1fr; } .article h1 { font-size: 24px; } }
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside class="side" id="side"></aside>
+  <main class="main">
+    <div class="topbar" id="topbar"></div>
+    <div class="page">
+      <div id="content"></div>
+      <div class="mt" id="newsletter"></div>
+      <footer class="foot" id="footer"></footer>
+    </div>
+  </main>
+</div>
+<script src="/static/shell.js"></script>
+<script>
+(function () {
+  const { icon, esc, shell, footer, copy } = window.SGI;
+  const $ = id => document.getElementById(id);
+  const slugFromPath = () => { const m = location.pathname.match(/^\/agora\/([^/]+)/); return m ? decodeURIComponent(m[1]) : null; };
+  Promise.all([window.SGI.menuReady, fetch('/data/blog.json').then(r => r.json()), fetch('/api/meta').then(r => r.json())]).then(([_m, B, m]) => {
+    const posts = (B.post || []).slice().sort((a, b) => b.data.split('/').reverse().join('') .localeCompare(a.data.split('/').reverse().join('')));
+    shell({ page: 'agora', meta: m, aree: null, shortcuts: posts.slice(0, 6).map(p => ({ icon: 'book', label: p.titolo, href: '/agora/' + p.slug })) });
+    footer(m);
+    const slug = slugFromPath();
+    const post = slug ? posts.find(p => p.slug === slug) : null;
+    if (slug && !post) { location.replace('/agora'); return; }
+    if (post) {
+      document.title = post.titolo + ' · Agorà · Toscana Diagnostica';
+      const ini = post.autore.split(' ').map(x => x[0]).join('').slice(0, 2).toUpperCase();
+      $('content').innerHTML = `
+        <div class="small" style="margin-bottom:14px"><a href="/agora">${icon('book', 14)} Agorà</a> <span class="muted">· ${esc(post.data)}</span></div>
+        <article class="article">
+          <h1>${esc(post.titolo)}</h1>
+          <div class="byline"><span class="av">${esc(ini)}</span><span><strong>${esc(post.autore)}</strong><br>${esc(post.ruolo || '')}</span><span class="spacer"></span><span>${esc(post.data)}${post.tempo ? ' · lettura ' + esc(post.tempo) : ''}</span></div>
+          <div class="body">${post.corpo.map(p => `<p>${esc(p)}</p>`).join('')}</div>
+          <div class="row mt"><button class="btn sm ghost" id="share">${icon('link', 14)} Copia il link all'articolo</button><a class="btn sm ghost" href="mailto:?subject=${encodeURIComponent(post.titolo + ' · Agorà Toscana Diagnostica')}&body=${encodeURIComponent(location.href)}">${icon('mail', 14)} Invia per e-mail</a></div>
+        </article>`;
+      $('share').addEventListener('click', () => copy(location.href, 'Link copiato', post.titolo));
+    } else {
+      $('content').innerHTML = `
+        <div class="page-head"><div><h1>${esc(B.titolo)}</h1><div class="sub">${esc(B.sottotitolo)}</div></div></div>
+        <div class="tiles post-list" style="grid-template-columns:repeat(auto-fill,minmax(320px,1fr))">
+          ${posts.map(p => `<a class="tile" href="/agora/${esc(p.slug)}"><div class="name">${esc(p.titolo)}</div><div class="sub">${esc(p.sommario)}</div><div class="meta">${esc(p.autore)} · ${esc(p.data)}${p.tempo ? ' · ' + esc(p.tempo) : ''}</div></a>`).join('')}
+        </div>`;
+    }
+    const N = B.newsletter || {};
+    $('newsletter').innerHTML = `<div class="newsletter">
+      <div><h2>${esc(N.titolo || 'Newsletter')}</h2><p>${esc(N.testo || '')}</p></div>
+      ${N.brevo_url ? `<iframe src="${esc(N.brevo_url)}" title="Iscrizione newsletter" loading="lazy"></iframe>` :
+        `<a class="btn" href="mailto:${esc(N.fallback_email || 'service@toscanadiagnostica.it')}?subject=${encodeURIComponent('Iscrizione newsletter Agorà')}&body=${encodeURIComponent('Desidero iscrivermi alla newsletter di Agorà.\\nNome e cognome:\\nLaboratorio / struttura:\\nE-mail:')}">${icon('mail', 16)} Iscriviti</a>`}
+    </div>`;
+  });
+})();
+</script>
+</body>
+</html>

@@ -43,7 +43,7 @@
 (function () {
   const { icon, esc, shell, footer } = window.SGI;
   const $ = id => document.getElementById(id);
-  Promise.all([fetch('/data/certificazioni.json').then(r => r.json()), fetch('/api/meta').then(r => r.json())]).then(([C, m]) => {
+  Promise.all([window.SGI.menuReady, fetch('/data/certificazioni.json').then(r => r.json()), fetch('/api/meta').then(r => r.json())]).then(([_menu, C, m]) => {
     shell({ page: 'cert', meta: m, aree: null, shortcuts: C.certificazioni.filter(c => c.pdf).map(c => ({ icon: 'award', label: 'Certificato ' + c.norma.split(':')[0], href: encodeURI('/certificati/' + c.pdf), blank: true })) });
     footer(m);
     $('intro').textContent = C.intro;

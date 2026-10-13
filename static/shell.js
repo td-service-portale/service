@@ -98,6 +98,9 @@ window.SGI = (function () {
         <a href="/" class="${page === 'home' ? 'active' : ''}">${icon('heart')}Preparazioni e documenti</a>
         <a href="/certificazioni" class="${page === 'cert' ? 'active' : ''}">${icon('award')}Certificazioni di qualità</a>
         <a href="/veq" class="${page === 'veq' ? 'active' : ''}">${icon('flask')}VEQ · Valutazione Esterna di Qualità</a>
+        <a href="/agora" class="${page === 'agora' ? 'active' : ''}">${icon('book')}Agorà · blog</a>
+        <div class="group">Servizi</div>
+        ${(window.SGI_MENU || []).map(v => `<a href="${esc(v.href || '/in-allestimento/' + v.id)}"${v.href && v.blank ? ' target="_blank" rel="noopener"' : ''}>${icon(v.icon || 'link')}${esc(v.label)}</a>`).join('')}
         <a href="/contatti" class="${page === 'contatti' ? 'active' : ''}">${icon('users')}Contatti</a>
         ${areaSel}
         ${sc}
@@ -124,5 +127,7 @@ window.SGI = (function () {
     const f = document.getElementById('footer');
     if (f) f.innerHTML = `Toscana Diagnostica S.r.l. · Portale Service di Laboratorio · P. IVA 07528130482 · Via di Pratignone 13/4, 50019 Sesto Fiorentino (FI) · documenti del Sistema di Gestione Integrato, indice REG006 rev. ${esc(meta.reg006_rev)} del ${esc(meta.reg006_data)} · pubblicazione del ${esc(meta.build)} · <a href="https://www.toscanadiagnostica.it" target="_blank">www.toscanadiagnostica.it</a>`;
   }
-  return { icon, esc, norm, toast, copy, copyHtml, shell, footer, mailtoDoc, copyDocLinks };
+  /* Voci di menu configurabili (data/menu.json): caricate una volta, prima del rendering della sidebar. */
+  const menuReady = fetch('/data/menu.json').then(r => r.ok ? r.json() : { voci: [] }).then(m => { window.SGI_MENU = m.voci || []; return window.SGI_MENU; }).catch(() => { window.SGI_MENU = []; return []; });
+  return { icon, esc, norm, toast, copy, copyHtml, shell, footer, mailtoDoc, copyDocLinks, menuReady };
 })();

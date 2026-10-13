@@ -38,7 +38,7 @@
   const { icon, esc, shell, footer } = window.SGI;
   const $ = id => document.getElementById(id);
   const tel = t => 'tel:+39' + t.replace(/\s+/g, '');
-  Promise.all([fetch('/data/contatti.json').then(r => r.json()), fetch('/api/meta').then(r => r.json())]).then(([C, m]) => {
+  Promise.all([window.SGI.menuReady, fetch('/data/contatti.json').then(r => r.json()), fetch('/api/meta').then(r => r.json())]).then(([_menu, C, m]) => {
     shell({ page: 'contatti', meta: m, aree: null, shortcuts: [] });
     footer(m);
     $('gruppi').innerHTML = C.gruppi.map(g => `
@@ -50,6 +50,7 @@
           ${c.nome ? `<div class="nome">${esc(c.nome)}</div>` : `<div class="nome">Toscana Diagnostica</div>`}
           <div style="margin-top:8px;display:flex;flex-direction:column;gap:5px">
             ${c.email ? `<a href="mailto:${esc(c.email)}">${icon('mail')}${esc(c.email)}</a>` : ''}
+            ${c.email2 ? `<a href="mailto:${esc(c.email2)}">${icon('mail')}${esc(c.email2)}</a>` : ''}
             ${c.tel ? `<a href="${tel(c.tel)}">${icon('phone')}${esc(c.tel)}</a>` : ''}
             ${c.cell ? `<a href="${tel(c.cell)}">${icon('phone')}${esc(c.cell)} <span class="small muted">cellulare</span></a>` : ''}
           </div>

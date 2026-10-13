@@ -9,6 +9,8 @@ Pagine:
   /certificazioni   Certificazioni di qualita' di Toscana Diagnostica (certificati PDF)
   /veq              Valutazione Esterna di Qualita' (CRRVEQ Careggi): programmi e documenti
   /contatti         Contatti di Toscana Diagnostica
+  /agora, /agora/<slug>          Agora', il blog (articoli in data/blog.json; newsletter Brevo configurabile)
+  /in-allestimento/<id>          pagina segnaposto per le voci di menu senza link (data/menu.json)
 
 Link stabili (senza revisione, restano validi quando il documento sale di revisione):
   /p/<codice shortcut>   preparazione della prestazione GIPO (es. /p/ECO003); il codice GIPO numerico e' accettato come alias
@@ -114,6 +116,17 @@ def veq():
 @app.route('/contatti')
 def contatti():
     return _page('contatti.html')
+
+
+@app.route('/agora')
+@app.route('/agora/<slug>')
+def agora(slug=None):
+    return _page('agora.html')
+
+
+@app.route('/in-allestimento/<vid>')
+def in_allestimento(vid):
+    return _page('in-allestimento.html')
 
 
 # ---------- Link stabili e file ----------

@@ -194,7 +194,7 @@
     else render('');
   }
 
-  Promise.all([fetch('/data/docs.json').then(r => r.json()), fetch('/data/meta.json').then(r => r.json()), fetch('/api/preparazioni').then(r => r.json())])
-    .then(([d, m, p]) => { DOCS = d; META = m; ROWS = p.righe || []; init(); })
+  Promise.all([window.SGI.menuReady, fetch('/data/docs.json').then(r => r.json()), fetch('/data/meta.json').then(r => r.json()), fetch('/api/preparazioni').then(r => r.json())])
+    .then(([_menu, d, m, p]) => { DOCS = d; META = m; ROWS = p.righe || []; init(); })
     .catch(() => { document.querySelector('.page').insertAdjacentHTML('afterbegin', '<div class="alert warn">Errore nel caricamento dei dati del portale.</div>'); });
 })();

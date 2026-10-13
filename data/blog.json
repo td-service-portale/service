@@ -1,0 +1,30 @@
+{
+  "titolo": "Agorà",
+  "sottotitolo": "Lo spazio di confronto del Service di Laboratorio di Toscana Diagnostica: esperienze, opinioni e approfondimenti per chi fa diagnostica ogni giorno.",
+  "newsletter": {
+    "titolo": "Iscriviti alla newsletter di Agorà",
+    "testo": "Un messaggio al mese, solo quando abbiamo qualcosa da dire: nuovi articoli, aggiornamenti operativi, novità del laboratorio. Nessuna pubblicità, cancellazione in un clic.",
+    "brevo_url": "",
+    "fallback_email": "service@toscanadiagnostica.it"
+  },
+  "post": [
+    {
+      "slug": "benvenuti-in-agora",
+      "titolo": "Benvenuti in Agorà",
+      "sommario": "Perché un laboratorio apre uno spazio di confronto con i propri clienti, e cosa ci aspettiamo da questa piazza.",
+      "data": "13/10/2026",
+      "autore": "Francesco Epifani",
+      "ruolo": "Chief Executive Officer, Toscana Diagnostica",
+      "tempo": "4 minuti",
+      "corpo": [
+        "Nell'Atene classica l'agorà era la piazza dove la città si incontrava: si trattava, si discuteva, si decideva. Non era un luogo di passaggio, era il luogo in cui una comunità diventava tale. Abbiamo scelto questo nome per lo spazio che state leggendo perché vogliamo che faccia esattamente questo: mettere in contatto chi, ogni giorno, lavora sui campioni, sui referti, sui pazienti, e che troppo spesso lo fa in solitudine.",
+        "Toscana Diagnostica è nata nell'aprile 2026 come rete sanitaria integrata, con un laboratorio di analisi che lavora per i pazienti e, in service, per altri laboratori e strutture sanitarie. Il portale che ospita questa pagina serve a rendere quel rapporto semplice e trasparente: preparazioni, moduli, procedure, certificazioni, controlli di qualità, tutto nella revisione in vigore, sempre raggiungibile. Ma un portale di documenti, da solo, resta un archivio. Agorà è la parte viva.",
+        "Fare rete, nel nostro settore, non è una formula di cortesia. La diagnostica di laboratorio è fatta di dettagli che nessuna norma riesce a descrivere fino in fondo: come si raccoglie davvero un campione difficile, quando ha senso ripetere un esame, come si spiega a un paziente un valore critico, come si organizza un trasporto in una giornata di caldo. Sono conoscenze che vivono nelle persone, non nei manuali. Metterle in comune costa poco e vale molto, perché l'errore evitato in un laboratorio è un errore evitato per tutti.",
+        "Fare opinione è il secondo motivo. Il laboratorio è spesso l'ultimo anello a cui si chiede un parere, anche quando è il primo a vedere i dati. Riteniamo che chi produce i risultati abbia il diritto, e il dovere, di esprimersi su come la diagnostica viene organizzata, pagata e valutata: appropriatezza prescrittiva, point of care, intelligenza artificiale applicata ai referti, accreditamento, sostenibilità. Qui troverete le nostre posizioni, scritte con nome e cognome, e lo spazio per le vostre.",
+        "Condividere esperienze professionali è il terzo. Pubblicheremo casi, soluzioni organizzative, letture di norme e circolari, resoconti dei programmi di Valutazione Esterna di Qualità, confronti tra metodi. Chiederemo ai laboratori che lavorano con noi di raccontare come hanno risolto un problema, e ospiteremo volentieri contributi firmati. Non cerchiamo consenso: cerchiamo il confronto che migliora il lavoro di tutti.",
+        "Qualche regola, poche. Scriveremo con un ritmo sostenibile, un articolo al mese circa, piuttosto che tanto e male. Ogni pezzo avrà un autore e una data. Le fonti saranno citate, i dati verificabili, le opinioni dichiarate come tali. Gli aggiornamenti operativi che riguardano il rapporto di service (circolari, ordini di materiale, promozioni) hanno le loro sezioni dedicate nel menu: Agorà resta lo spazio del pensiero, non dell'avviso.",
+        "Se volete essere avvisati quando pubblichiamo, in fondo a questa pagina potete iscrivervi alla newsletter. Se volete proporre un tema o un contributo, scrivete a service@toscanadiagnostica.it. La piazza è aperta: benvenuti."
+      ]
+    }
+  ]
+}
