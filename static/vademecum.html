@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#01212C">
+<meta name="description" content="Vademecum degli esami del Laboratorio di Analisi di Toscana Diagnostica: codici, metodi, tempi di refertazione, campione, valori di riferimento.">
+<title>Vademecum degli esami · Toscana Diagnostica Service</title>
+<link rel="icon" type="image/png" href="/static/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/app.css">
+<style>
+.viewer { background: #525659; border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); border: 1px solid var(--line); }
+.viewer iframe, .viewer object { display: block; width: 100%; height: calc(100vh - 230px); min-height: 560px; border: 0; }
+.viewer .nopdf { padding: 40px; text-align: center; color: #fff; }
+.tools { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.tools .searchbox { flex: 1 1 320px; }
+@media (max-width: 860px) { .viewer iframe, .viewer object { height: 70vh; min-height: 420px; } }
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside class="side" id="side"></aside>
+  <main class="main">
+    <div class="topbar" id="topbar"></div>
+    <div class="page">
+      <div class="page-head">
+        <div>
+          <h1>Vademecum degli esami</h1>
+          <div class="sub">La guida completa agli esami del Laboratorio di Analisi: per ogni analita codice, metodo, tempo di refertazione, tipo di campione, sezione e valori di riferimento. Sfoglialo qui, cerca un esame con la lente del visualizzatore oppure scaricalo per averlo sempre a portata di mano.</div>
+        </div>
+      </div>
+      <div class="grid g4" id="kpis"></div>
+      <div class="card mt">
+        <div class="bd tools">
+          <div class="searchbox" id="sb"><input type="text" id="q" placeholder="Cerca un esame nel vademecum (es. creatinina, HbA1c, tampone)…" autocomplete="off"><button class="iconbtn clear" id="qClear" aria-label="Cancella"></button></div>
+          <a class="btn" id="dl" href="#" download>Scarica il PDF</a>
+          <a class="btn ghost" id="open" href="#" target="_blank" rel="noopener">Apri a schermo intero</a>
+          <button class="btn ghost" id="copyLink">Copia il link</button>
+        </div>
+      </div>
+      <div class="viewer mt" id="viewer"></div>
+      <div class="alert info mt" style="margin-top:16px">Il vademecum è un documento in continuo aggiornamento: fa fede la versione pubblicata qui. Per esami non presenti o per dubbi su campione e trasporto contatta il laboratorio allo 055 7765108 o a laboratorio@toscanadiagnostica.it.</div>
+      <footer class="foot" id="footer"></footer>
+    </div>
+  </main>
+</div>
+<script src="/static/shell.js"></script>
+<script>
+(function () {
+  const { icon, esc, shell, footer, copy } = window.SGI;
+  const $ = id => document.getElementById(id);
+  const FILE = '/vademecum/Toscana Diagnostica - Vademecum degli esami.pdf';
+  const url = encodeURI(FILE);
+  Promise.all([window.SGI.menuReady, fetch('/api/meta').then(r => r.json())]).then(([_m, m]) => {
+    shell({ page: 'vademecum', meta: m, aree: null, shortcuts: [{ icon: 'download', label: 'Scarica il vademecum', href: url + '?dl=1' }] });
+    footer(m);
+    $('kpis').innerHTML = `
+      <div class="card kpi accent"><div class="lbl">Vademecum degli esami</div><div class="val" style="font-size:20px">Edizione corrente</div><div class="foot">aggiornato il 22/10/2026</div></div>
+      <div class="card kpi"><div class="lbl">Contenuto per ogni esame</div><div class="val" style="font-size:20px">6 campi</div><div class="foot">codice · metodo · TAT · campione · sezione · valori di riferimento</div></div>
+      <div class="card kpi"><div class="lbl">Come cercare</div><div class="val" style="font-size:20px">Ctrl + F</div><div class="foot">nel visualizzatore, oppure la casella qui sotto</div></div>
+      <div class="card kpi"><div class="lbl">Formato</div><div class="val" style="font-size:20px">PDF</div><div class="foot">scaricabile e stampabile</div></div>`;
+    $('dl').href = url + '?dl=1'; $('open').href = url;
+    $('copyLink').addEventListener('click', () => copy(location.origin + '/vademecum', 'Link copiato', 'Vademecum degli esami'));
+    const render = q => { $('viewer').innerHTML = `<iframe src="${url}#toolbar=1&navpanes=0&view=FitH${q ? '&search=' + encodeURIComponent(q) : ''}" title="Vademecum degli esami"></iframe>`; };
+    render('');
+    const inp = $('q'), clr = $('qClear'); clr.innerHTML = icon('x', 14); $('sb').insertAdjacentHTML('afterbegin', icon('search'));
+    let t = null;
+    inp.addEventListener('input', () => { clr.classList.toggle('on', inp.value.length > 0); clearTimeout(t); t = setTimeout(() => render(inp.value.trim()), 500); });
+    clr.addEventListener('click', () => { inp.value = ''; clr.classList.remove('on'); render(''); });
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') { clearTimeout(t); render(inp.value.trim()); } });
+  });
+})();
+</script>
+</body>
+</html>

@@ -5,8 +5,8 @@
    "id": "vademecum",
    "label": "Vademecum",
    "icon": "book",
-   "href": "",
-   "blank": true,
+   "href": "/vademecum",
+   "blank": false,
    "descrizione": "La guida operativa per i laboratori clienti: come preparare, confezionare e inviare i campioni, tempi, modulistica, contatti."
   },
   {
@@ -23,8 +23,14 @@
    "icon": "folder",
    "href": "",
    "blank": true,
-   "descrizione": "Richiesta di provette, contenitori, buste di trasporto e modulistica. Nel frattempo è disponibile il modulo TD-SGI-MOD252 (Richiesta di Approvvigionamento Materiale) da inviare a laboratorio@toscanadiagnostica.it.",
-   "modulo": "TD-SGI-MOD252"
+   "descrizione": "Richiesta di provette, contenitori, buste di trasporto e modulistica. In alternativa è disponibile il modulo TD-SGI-MOD252 (Richiesta di Approvvigionamento Materiale) da inviare a laboratorio@toscanadiagnostica.it.",
+   "modulo": "TD-SGI-MOD252",
+   "box": {
+    "url": "https://orders.toscanadiagnostica.it",
+    "titolo": "Portale Ordini",
+    "testo": "Ordina provette, contenitori, buste di trasporto e modulistica dal portale dedicato. Si apre in una nuova scheda.",
+    "icon": "folder"
+   }
   },
   {
    "id": "promozioni",

@@ -11,32 +11,180 @@
     "sito": "https://crrveq.aou-careggi.toscana.it"
   },
   "ciclo": "2026",
-  "contratto_pdf": "CRRVEQ - Contratto di adesione ciclo 2026 - Toscana Diagnostica.pdf",
-  "note_ciclo": "Adesione al ciclo 2026 (contratto M/1481/03 rev. 25). Gli esercizi iniziano a febbraio; la partecipazione al ciclo completo dà diritto all'attestato di partecipazione a fine anno. È stata richiesta l'integrazione del programma di Anatomia Patologica.",
+  "contratto_pdf": "CRRVEQ - Contratto di adesione ciclo 2026 - Toscana Diagnostica (firmato 19-02-2026).pdf",
+  "note_ciclo": "Adesione al ciclo 2026 sottoscritta il 19/02/2026 (contratto M/1481/03 rev. 25). Gli esercizi iniziano a febbraio; la partecipazione al ciclo completo dà diritto all'attestato di partecipazione a fine anno. L'integrazione del programma di Anatomia Patologica, richiesta con il contratto, è stata accordata da AOU Careggi. Per la diagnostica molecolare HPV il laboratorio partecipa anche al programma QCMD.",
   "programmi": [
-    {"nome": "Chimica clinica", "area": "Chimica clinica e biochimica", "accreditato": true},
-    {"nome": "Biochimica urina", "area": "Chimica clinica e biochimica", "accreditato": true},
-    {"nome": "Esame chimico-fisico urine", "area": "Chimica clinica e biochimica", "accreditato": false},
-    {"nome": "Proteine specifiche", "area": "Chimica clinica e biochimica", "accreditato": true},
-    {"nome": "Elettroforesi (interpretazione tracciati)", "area": "Chimica clinica e biochimica", "accreditato": false},
-    {"nome": "Ormoni e marcatori tumorali", "area": "Chimica clinica e biochimica", "accreditato": true},
-    {"nome": "Marcatori cardiaci", "area": "Chimica clinica e biochimica", "accreditato": true},
-    {"nome": "Peptidi natriuretici", "area": "Chimica clinica e biochimica", "accreditato": true},
-    {"nome": "Procalcitonina", "area": "Chimica clinica e biochimica", "accreditato": true},
-    {"nome": "Emoglobina glicata (HbA1c)", "area": "Chimica clinica e biochimica", "accreditato": true},
-    {"nome": "Ematologia", "area": "Ematologia e coagulazione", "accreditato": true},
-    {"nome": "Coagulazione 1", "area": "Ematologia e coagulazione", "accreditato": true},
-    {"nome": "V.E.S.", "area": "Ematologia e coagulazione", "accreditato": false},
-    {"nome": "Immunoematologia", "area": "Ematologia e coagulazione", "accreditato": false},
-    {"nome": "Autoimmunità", "area": "Sierologia e immunologia", "accreditato": false},
-    {"nome": "Sieroimmunologia virologica 1 (HAV, HCV, HIV, HBV)", "area": "Sierologia e immunologia", "accreditato": false},
-    {"nome": "Sieroimmunologia virologica 3 (Lue)", "area": "Sierologia e immunologia", "accreditato": false},
-    {"nome": "Batteriologia", "area": "Microbiologia e biologia molecolare", "accreditato": true},
-    {"nome": "Biologia molecolare (virologica)", "area": "Microbiologia e biologia molecolare", "accreditato": false},
-    {"nome": "HPV-HR di screening", "area": "Microbiologia e biologia molecolare", "accreditato": false},
-    {"nome": "Droghe (screening)", "area": "Tossicologia", "accreditato": false},
-    {"nome": "Sangue occulto", "area": "Altre aree", "accreditato": true},
-    {"nome": "PAP test in fase liquida", "area": "Altre aree", "accreditato": true}
+    {
+      "nome": "Chimica clinica",
+      "area": "Chimica clinica e biochimica",
+      "accreditato": true,
+      "provider": "CRRVEQ"
+    },
+    {
+      "nome": "Biochimica urina",
+      "area": "Chimica clinica e biochimica",
+      "accreditato": true,
+      "provider": "CRRVEQ"
+    },
+    {
+      "nome": "Esame chimico-fisico urine",
+      "area": "Chimica clinica e biochimica",
+      "accreditato": false,
+      "provider": "CRRVEQ"
+    },
+    {
+      "nome": "Proteine specifiche",
+      "area": "Chimica clinica e biochimica",
+      "accreditato": true,
+      "provider": "CRRVEQ"
+    },
+    {
+      "nome": "Elettroforesi (interpretazione tracciati)",
+      "area": "Chimica clinica e biochimica",
+      "accreditato": false,
+      "provider": "CRRVEQ"
+    },
+    {
+      "nome": "Ormoni e marcatori tumorali",
+      "area": "Chimica clinica e biochimica",
+      "accreditato": true,
+      "provider": "CRRVEQ"
+    },
+    {
+      "nome": "Marcatori cardiaci",
+      "area": "Chimica clinica e biochimica",
+      "accreditato": true,
+      "provider": "CRRVEQ"
+    },
+    {
+      "nome": "Peptidi natriuretici",
+      "area": "Chimica clinica e biochimica",
+      "accreditato": true,
+      "provider": "CRRVEQ"
+    },
+    {
+      "nome": "Procalcitonina",
+      "area": "Chimica clinica e biochimica",
+      "accreditato": true,
+      "provider": "CRRVEQ"
+    },
+    {
+      "nome": "Emoglobina glicata (HbA1c)",
+      "area": "Chimica clinica e biochimica",
+      "accreditato": true,
+      "provider": "CRRVEQ"
+    },
+    {
+      "nome": "Ematologia",
+      "area": "Ematologia e coagulazione",
+      "accreditato": true,
+      "provider": "CRRVEQ"
+    },
+    {
+      "nome": "Coagulazione 1",
+      "area": "Ematologia e coagulazione",
+      "accreditato": true,
+      "provider": "CRRVEQ"
+    },
+    {
+      "nome": "V.E.S.",
+      "area": "Ematologia e coagulazione",
+      "accreditato": false,
+      "provider": "CRRVEQ"
+    },
+    {
+      "nome": "Immunoematologia",
+      "area": "Ematologia e coagulazione",
+      "accreditato": false,
+      "provider": "CRRVEQ"
+    },
+    {
+      "nome": "Autoimmunità",
+      "area": "Sierologia e immunologia",
+      "accreditato": false,
+      "provider": "CRRVEQ"
+    },
+    {
+      "nome": "Sieroimmunologia virologica 1 (HAV, HCV, HIV, HBV)",
+      "area": "Sierologia e immunologia",
+      "accreditato": false,
+      "provider": "CRRVEQ"
+    },
+    {
+      "nome": "Sieroimmunologia virologica 3 (Lue)",
+      "area": "Sierologia e immunologia",
+      "accreditato": false,
+      "provider": "CRRVEQ"
+    },
+    {
+      "nome": "Batteriologia",
+      "area": "Microbiologia e biologia molecolare",
+      "accreditato": true,
+      "provider": "CRRVEQ"
+    },
+    {
+      "nome": "Biologia molecolare (virologica)",
+      "area": "Microbiologia e biologia molecolare",
+      "accreditato": false,
+      "provider": "CRRVEQ"
+    },
+    {
+      "nome": "HPV-HR di screening",
+      "area": "Microbiologia e biologia molecolare",
+      "accreditato": false,
+      "provider": "CRRVEQ"
+    },
+    {
+      "nome": "Droghe (screening)",
+      "area": "Tossicologia",
+      "accreditato": false,
+      "provider": "CRRVEQ"
+    },
+    {
+      "nome": "Sangue occulto",
+      "area": "Altre aree",
+      "accreditato": true,
+      "provider": "CRRVEQ"
+    },
+    {
+      "nome": "PAP test in fase liquida",
+      "area": "Altre aree",
+      "accreditato": true,
+      "provider": "CRRVEQ"
+    },
+    {
+      "nome": "Anatomia Patologica",
+      "area": "Anatomia Patologica",
+      "accreditato": false,
+      "provider": "CRRVEQ",
+      "nota": "integrazione richiesta con il contratto di adesione e accordata da AOU Careggi"
+    },
+    {
+      "nome": "HPV (biologia molecolare, campioni in fase liquida PreservCyt/SurePath)",
+      "area": "Microbiologia e biologia molecolare",
+      "accreditato": true,
+      "provider": "QCMD",
+      "nota": "programma QCMD HPV-PreservCyt / HPV-SurePath, qualitativo, 6-12 campioni per ciclo"
+    }
   ],
-  "documenti_sgi": ["TD-SGI-PRO045", "TD-SGI-PRO046", "TD-SGI-PRO082", "TD-SGI-MOD186", "TD-SGI-PRO073", "TD-SGI-PRO077"]
+  "documenti_sgi": [
+    "TD-SGI-PRO045",
+    "TD-SGI-PRO046",
+    "TD-SGI-PRO082",
+    "TD-SGI-MOD186",
+    "TD-SGI-PRO073",
+    "TD-SGI-PRO077"
+  ],
+  "provider": {
+    "CRRVEQ": {
+      "nome": "CRRVEQ · AOU Careggi",
+      "descr": "Centro Regionale di Riferimento per la VEQ della Regione Toscana"
+    },
+    "QCMD": {
+      "nome": "QCMD · Quality Control for Molecular Diagnostics",
+      "descr": "Provider internazionale di VEQ per la diagnostica molecolare, programmi certificati ISO/IEC 17043, distribuito in Italia da ELITechGroup S.p.A. (Torino)",
+      "sito": "https://www.qcmd.org",
+      "calendario_pdf": "QCMD - Calendario programmi VEQ 2026 (ELITechGroup).pdf"
+    }
+  }
 }

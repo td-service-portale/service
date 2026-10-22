@@ -10,6 +10,16 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/static/app.css">
+<style>
+.linkbox { display: block; color: inherit; margin-bottom: 18px; border-color: var(--teal); }
+.linkbox .bd { display: grid; grid-template-columns: auto 1fr auto; gap: 18px; align-items: center; }
+.linkbox .ico { width: 64px; height: 64px; border-radius: 14px; background: var(--teal); color: #fff; display: flex; align-items: center; justify-content: center; }
+.linkbox .t { font-size: 18px; font-weight: 800; color: var(--jet); }
+.linkbox .d { color: var(--muted); margin-top: 3px; }
+.linkbox .u { font-family: var(--mono); font-size: 12.5px; color: var(--teal); margin-top: 6px; font-weight: 700; }
+.linkbox .go { color: var(--teal); }
+.linkbox:hover { text-decoration: none; border-color: var(--blue); box-shadow: 0 6px 20px rgba(1,33,44,.12); }
+</style>
 </head>
 <body>
 <div class="shell">
@@ -36,7 +46,7 @@
     document.title = (v ? v.label : 'Sezione') + ' · Toscana Diagnostica Service';
     $('content').innerHTML = `
       <div class="page-head"><div><h1>${esc(v ? v.label : 'Sezione')}</h1><div class="sub">${esc(v ? v.descrizione || '' : '')}</div></div></div>
-      <div class="alert info">${icon('info', 18)}<div><strong>Sezione in allestimento.</strong> Sarà attiva a breve. Nel frattempo il Laboratorio di Analisi risponde a <a href="mailto:laboratorio@toscanadiagnostica.it">laboratorio@toscanadiagnostica.it</a> e allo 055 7765102, e il Service a <a href="mailto:service@toscanadiagnostica.it">service@toscanadiagnostica.it</a>.</div></div>
+      ${v && v.box ? `<a class="card linkbox" href="${esc(v.box.url)}" target="_blank" rel="noopener"><div class="bd"><div class="ico">${icon(v.box.icon || 'link', 34)}</div><div><div class="t">${esc(v.box.titolo)}</div><div class="d">${esc(v.box.testo || '')}</div><div class="u">${esc(v.box.url.replace('https://', ''))}</div></div><div class="go">${icon('link', 20)}</div></div></a>` : `<div class="alert info">${icon('info', 18)}<div><strong>Sezione in allestimento.</strong> Sarà attiva a breve. Nel frattempo il Laboratorio di Analisi risponde a <a href="mailto:laboratorio@toscanadiagnostica.it">laboratorio@toscanadiagnostica.it</a> e allo 055 7765108, e il Service a <a href="mailto:service@toscanadiagnostica.it">service@toscanadiagnostica.it</a>.</div></div>`}
       ${v && v.modulo ? `<div class="row"><a class="btn" href="/m/${esc(v.modulo)}" target="_blank">${icon('print', 15)} Apri il modulo ${esc(v.modulo)}</a><a class="btn ghost" href="/">Torna a Preparazioni e documenti</a></div>` : `<a class="btn ghost" href="/">Torna a Preparazioni e documenti</a>`}`;
   });
 })();

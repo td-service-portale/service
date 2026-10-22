@@ -11,6 +11,7 @@ Pagine:
   /contatti         Contatti di Toscana Diagnostica
   /agora, /agora/<slug>          Agora', il blog (articoli in data/blog.json; newsletter Brevo configurabile)
   /in-allestimento/<id>          pagina segnaposto per le voci di menu senza link (data/menu.json)
+  /vademecum                     Vademecum degli esami (PDF consultabile e scaricabile, cartella vademecum/)
 
 Link stabili (senza revisione, restano validi quando il documento sale di revisione):
   /p/<codice shortcut>   preparazione della prestazione GIPO (es. /p/ECO003); il codice GIPO numerico e' accettato come alias
@@ -81,7 +82,7 @@ def _lookup(code):
 def _serve(relpath):
     """Consegna 'stampabili/x.pdf', 'docs/area/x.pdf' o 'certificati/x.pdf' senza redirect."""
     folder, _, fname = relpath.partition('/')
-    if folder not in ('stampabili', 'docs', 'certificati'):
+    if folder not in ('stampabili', 'docs', 'certificati', 'vademecum'):
         abort(404)
     return _pdf_headers(make_response(send_from_directory(os.path.join(BASE, folder), fname)))
 
@@ -122,6 +123,19 @@ def contatti():
 @app.route('/agora/<slug>')
 def agora(slug=None):
     return _page('agora.html')
+
+
+@app.route('/vademecum')
+def vademecum():
+    return _page('vademecum.html')
+
+
+@app.route('/vademecum/<path:fname>')
+def vademecum_file(fname):
+    resp = make_response(send_from_directory(os.path.join(BASE, 'vademecum'), fname, as_attachment=request.args.get('dl') == '1'))
+    resp.headers['Content-Type'] = 'application/pdf'
+    resp.headers['Cache-Control'] = 'public, max-age=3600'
+    return resp
 
 
 @app.route('/in-allestimento/<vid>')

@@ -63,26 +63,32 @@
   const { icon, esc, shell, footer } = window.SGI;
   const $ = id => document.getElementById(id);
   Promise.all([window.SGI.menuReady, fetch('/data/veq.json').then(r => r.json()), fetch('/api/meta').then(r => r.json()), fetch('/data/docs.json').then(r => r.json())]).then(([_menu, V, m, docs]) => {
+    const prov = V.provider || {};
     shell({ page: 'veq', meta: m, aree: null, shortcuts: [
       { icon: 'link', label: 'Sito CRRVEQ Careggi', href: V.centro.sito, blank: true },
-      V.contratto_pdf ? { icon: 'doc', label: 'Contratto di adesione ' + V.ciclo, href: encodeURI('/certificati/' + V.contratto_pdf), blank: true } : null,
+      prov.QCMD && prov.QCMD.sito ? { icon: 'link', label: 'Sito QCMD', href: prov.QCMD.sito, blank: true } : null,
+      V.contratto_pdf ? { icon: 'doc', label: 'Contratto CRRVEQ ' + V.ciclo + ' (firmato)', href: encodeURI('/certificati/' + V.contratto_pdf), blank: true } : null,
+      prov.QCMD && prov.QCMD.calendario_pdf ? { icon: 'doc', label: 'Calendario QCMD ' + V.ciclo, href: encodeURI('/certificati/' + prov.QCMD.calendario_pdf), blank: true } : null,
     ].filter(Boolean) });
     footer(m);
     $('intro').textContent = V.intro;
     const acc = V.programmi.filter(p => p.accreditato).length;
     const aree = [...new Set(V.programmi.map(p => p.area))];
+    const nProv = [...new Set(V.programmi.map(p => p.provider || 'CRRVEQ'))].length;
     $('kpis').innerHTML = `
       <div class="card kpi accent"><div class="lbl">Programmi VEQ · ciclo ${esc(V.ciclo)}</div><div class="val">${V.programmi.length}</div><div class="foot">${aree.length} aree analitiche</div></div>
       <div class="card kpi"><div class="lbl">Programmi accreditati ISO/IEC 17043</div><div class="val">${acc}</div><div class="foot">provider accreditato ACCREDIA</div></div>
-      <div class="card kpi"><div class="lbl">Centro di riferimento</div><div class="val" style="font-size:20px">CRRVEQ</div><div class="foot">AOU Careggi · Regione Toscana · dal 1989</div></div>
+      <div class="card kpi"><div class="lbl">Provider VEQ</div><div class="val" style="font-size:20px">${nProv === 1 ? 'CRRVEQ' : 'CRRVEQ + QCMD'}</div><div class="foot">AOU Careggi (Regione Toscana) · QCMD per la diagnostica molecolare</div></div>
       <div class="card kpi"><div class="lbl">Report per laboratorio</div><div class="val" style="font-size:20px">per esercizio</div><div class="foot">più elaborazione finale di ciclo e attestato</div></div>`;
     $('progCount').textContent = V.programmi.length;
     $('progTitle').textContent = 'Programmi VEQ · ciclo ' + V.ciclo;
     $('programmi').innerHTML = aree.map(a => `<h3 style="margin:10px 0 4px">${esc(a)}</h3>` + V.programmi.filter(p => p.area === a).map(p => `
-      <div class="veq-prog"><span class="strong">${esc(p.nome)}</span>${p.accreditato ? '<span class="badge b-green">accreditato ISO/IEC 17043</span>' : '<span class="badge b-grey">programma non accreditato</span>'}</div>`).join('')).join('') +
+      <div class="veq-prog"><span><span class="strong">${esc(p.nome)}</span>${p.nota ? `<div class="small muted">${esc(p.nota)}</div>` : ''}</span><span style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">${p.provider && p.provider !== 'CRRVEQ' ? `<span class="badge b-mauve">${esc(p.provider)}</span>` : ''}${p.accreditato ? '<span class="badge b-green">accreditato ISO/IEC 17043</span>' : '<span class="badge b-grey">programma non accreditato</span>'}</span></div>`).join('')).join('') +
       `<p class="small muted" style="margin:14px 0 0">${esc(V.note_ciclo)}</p>`;
     $('perche').innerHTML = `<p>${esc(V.perche)}</p>`;
-    $('centro').innerHTML = `<p><strong>${esc(V.centro.nome)}</strong><br>${esc(V.centro.ente)}</p><p class="muted">${esc(V.centro.descrizione)}</p><p class="small">${esc(V.centro.indirizzo)} · tel. ${esc(V.centro.telefono)} · <a href="mailto:${esc(V.centro.email)}">${esc(V.centro.email)}</a> · <a href="${esc(V.centro.sito)}" target="_blank" rel="noopener">${esc(V.centro.sito.replace('https://', ''))}</a></p>`;
+    const q = prov.QCMD;
+    $('centro').innerHTML = `<p><strong>${esc(V.centro.nome)}</strong><br>${esc(V.centro.ente)}</p><p class="muted">${esc(V.centro.descrizione)}</p><p class="small">${esc(V.centro.indirizzo)} · tel. ${esc(V.centro.telefono)} · <a href="mailto:${esc(V.centro.email)}">${esc(V.centro.email)}</a> · <a href="${esc(V.centro.sito)}" target="_blank" rel="noopener">${esc(V.centro.sito.replace('https://', ''))}</a></p>` +
+      (q ? `<hr style="border:0;border-top:1px solid var(--line);margin:14px 0"><p><strong>${esc(q.nome)}</strong></p><p class="muted">${esc(q.descr)}</p><p class="small">${q.sito ? `<a href="${esc(q.sito)}" target="_blank" rel="noopener">${esc(q.sito.replace('https://', ''))}</a>` : ''}${q.calendario_pdf ? ` · <a href="${encodeURI('/certificati/' + q.calendario_pdf)}" target="_blank">Calendario programmi QCMD 2026</a>` : ''}</p>` : '');
     const find = c => docs.find(d => d.code.startsWith(c + '_'));
     $('docTiles').innerHTML = V.documenti_sgi.map(find).filter(Boolean).map(d => `<a class="tile" href="${d.pdf ? encodeURI('/docs/' + d.pdf) : '#'}" target="_blank"><div class="code">${esc(d.code)}</div><div class="name">${esc(d.title)}</div></a>`).join('');
   });

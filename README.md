@@ -6,7 +6,7 @@ Sito pubblico dedicato ai laboratori e alle strutture clienti del Service di Lab
 2. **Certificazioni di qualità** (`/certificazioni`): le norme del Sistema di Gestione Integrato, i certificati EuCI scaricabili (ISO 9001, 14001, 45001, 37001), campo di applicazione, accreditamento SSR, autorizzazione sanitaria, Politica Integrata.
 3. **VEQ** (`/veq`): cos'è la Valutazione Esterna di Qualità, il CRRVEQ Careggi, i 23 programmi del ciclo 2026, le procedure SGI collegate, il contratto di adesione.
 4. **Agorà** (`/agora`, `/agora/<slug>`): il blog. Articoli in `data/blog.json` (titolo, slug, data, autore, sommario, paragrafi); in fondo il box newsletter: con `newsletter.brevo_url` valorizzato mostra il form Brevo in iframe, altrimenti un pulsante mailto a `fallback_email`.
-5. **Servizi** (voci configurabili in `data/menu.json`): Circolari e aggiornamenti operativi, Ordine del materiale, Check-up e promozioni mensili (per ora senza link: aprono la pagina segnaposto `/in-allestimento/<id>`; quando `href` viene valorizzato il menu punta direttamente al link, in nuova scheda se `blank` è true), Portale NC (https://nc.toscanadiagnostica.it, nuova scheda).
+5. **Servizi** (voci configurabili in `data/menu.json`): Circolari e aggiornamenti operativi, Ordine del materiale, Check-up e promozioni mensili (per ora senza link: aprono la pagina segnaposto `/in-allestimento/<id>`; quando `href` viene valorizzato il menu punta direttamente al link, in nuova scheda se `blank` è true), Portale NC (https://nc.toscanadiagnostica.it, nuova scheda). Una voce con `box` {url, titolo, testo, icon} mostra nella pagina segnaposto un riquadro cliccabile verso un portale esterno (es. Ordine del materiale -> https://orders.toscanadiagnostica.it).
 6. **Contatti** (`/contatti`), da `data/contatti.json`.
 
 ## Perimetro documentale (decisione AD 13/10/2026)
@@ -27,7 +27,8 @@ data/veq.json               REDAZIONALE: programmi VEQ del ciclo, centro, testi
 data/contatti.json          REDAZIONALE: contatti
 data/blog.json              REDAZIONALE: articoli di Agora' e newsletter (Brevo)
 data/menu.json              REDAZIONALE: voci di menu Servizi (link esterni o segnaposto)
-certificati/                PDF dei certificati, Politica Integrata, contratto di adesione CRRVEQ
+certificati/                PDF dei certificati, Politica Integrata, contratto di adesione CRRVEQ firmato, calendario QCMD
+vademecum/                  PDF del Vademecum degli esami (pagina /vademecum: visualizzatore, ricerca, download con ?dl=1)
 docs/<Area>/*.pdf, stampabili/*.pdf   generati dal build
 static/                     index.html + app.js (pagina 1), certificazioni.html, veq.html, contatti.html, agora.html, in-allestimento.html, shell.js, app.css, loghi
 ```
@@ -40,7 +41,7 @@ static/                     index.html + app.js (pagina 1), certificazioni.html,
 | `/p/<codice shortcut>` (es. `/p/ECO003`) | PDF della preparazione della prestazione; se più di una, elenco. Codice GIPO numerico accettato come alias. `.pdf` forza il PDF |
 | `/m/TD-SGI-INF001` | versione stampabile corrente del modulo/informativa |
 | `/doc/TD-SGI-PRO042` | PDF corrente del documento |
-| `/certificazioni`, `/veq`, `/contatti`, `/agora`, `/agora/<slug>`, `/in-allestimento/<id>` | pagine |
+| `/certificazioni`, `/veq`, `/contatti`, `/agora`, `/agora/<slug>`, `/vademecum`, `/in-allestimento/<id>` | pagine |
 | `/certificati/<file>.pdf`, `/docs/<area>/<file>.pdf`, `/stampabili/<file>.pdf` | file |
 | `/api/preparazioni`, `/api/meta`, `/data/*.json`, `/healthz` | dati |
 

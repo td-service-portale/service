@@ -106,7 +106,7 @@ window.SGI = (function () {
         ${sc}
         <div class="group">Laboratorio di Analisi</div>
         <a href="mailto:laboratorio@toscanadiagnostica.it?subject=${encodeURIComponent('[Portale Service] Richiesta')}">${icon('mail')}Scrivi al laboratorio</a>
-        <a href="tel:+390557765102">${icon('phone')}055 7765102</a>
+        <a href="tel:+390557765108">${icon('phone')}055 7765108</a>
       </nav>
       <div class="me">
         <div class="name">Toscana Diagnostica S.r.l.</div>
