@@ -65,7 +65,8 @@
         </div>
       </div></div>`).join('');
     $('campo').innerHTML = `<p>${esc(C.campo)}</p><p class="small muted">${esc(C.sedi.nota)}: ${esc(C.sedi.legale)} · unità operativa ${esc(C.sedi.operativa)} · Settore IAF ${esc(C.organismo.settore_iaf)}</p>`;
-    $('altri').innerHTML = C.altri_requisiti.map(a => `<div class="card"><div class="hd"><h2>${esc(a.titolo)}</h2></div><div class="bd"><p style="margin:0 0 ${a.pdf ? '10px' : '0'}" class="muted">${esc(a.testo)}</p>${a.pdf ? `<a class="btn sm" href="${encodeURI('/certificati/' + a.pdf)}" target="_blank">${icon('doc', 14)} Apri il documento</a>` : ''}</div></div>`).join('');
+    const hrefAltro = a => a.doc ? '/doc/' + encodeURIComponent(a.doc) : (a.pdf ? encodeURI('/certificati/' + a.pdf) : '');
+    $('altri').innerHTML = C.altri_requisiti.map(a => `<div class="card"><div class="hd"><h2>${esc(a.titolo)}</h2></div><div class="bd"><p style="margin:0 0 ${hrefAltro(a) ? '10px' : '0'}" class="muted">${esc(a.testo)}</p>${hrefAltro(a) ? `<a class="btn sm" href="${hrefAltro(a)}" target="_blank">${icon('doc', 14)} Apri il documento</a>` : ''}</div></div>`).join('');
     $('organismo').innerHTML = `<p><strong>${esc(C.organismo.nome)}</strong> · ${esc(C.organismo.sede)}</p><p class="muted">${esc(C.organismo.accreditamento)}</p><p class="small muted">La validità di ogni certificato è verificabile tramite il QR code stampato sul certificato o su <a href="${esc(C.organismo.verifica)}" target="_blank" rel="noopener">${esc(C.organismo.verifica.replace('https://', ''))}</a>.</p>`;
   });
 })();

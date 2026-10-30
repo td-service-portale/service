@@ -194,10 +194,26 @@ def main():
     # entrano nel sito solo come "istruzioni di preparazione" (prep_only), non nell'elenco documentale.
     prep_rows = read_prestazioni(a.prestazioni)[4] if a.prestazioni else []
     wanted = {ref for row in prep_rows for ref in row['preparazioni']}
+    # Documenti SGI richiamati per codice (senza revisione) da data/certificazioni.json (campo "doc", es. TD-SGI-POL001):
+    # entrano nel sito come cert_only, fuori dall'elenco documentale, cosi' il link /doc/<codice> apre sempre la revisione in vigore.
+    cert_wanted = set()
+    cert_path = os.path.join(a.out, 'data', 'certificazioni.json')
+    if os.path.exists(cert_path):
+        cj = json.load(open(cert_path, encoding='utf-8'))
+        for sez in ('altri_requisiti', 'certificazioni'):
+            for item in cj.get(sez, []):
+                c = norm_code(item.get('doc')) if item.get('doc') else None
+                if c:
+                    cert_wanted.add(c)
+    wanted = wanted | cert_wanted
     in_per = {d['code'] for d in perimetro} | {d['code'].rsplit('_', 1)[0] for d in perimetro if not re.search(r'_0[a-z]$', d['code'])}
     extra = [d for d in docs if d not in perimetro and (d['code'] in wanted or (not re.search(r'_0[a-z]$', d['code']) and d['code'].rsplit('_', 1)[0] in wanted))]
     for d in extra:
         d['prep_only'] = True
+        d['cert_only'] = (d['code'] in cert_wanted) or (not re.search(r'_0[a-z]$', d['code']) and d['code'].rsplit('_', 1)[0] in cert_wanted)
+    missing_cert = sorted(c for c in cert_wanted if not any(x['code'] == c or x['code'].rsplit('_', 1)[0] == c for x in perimetro + extra))
+    if missing_cert:
+        sys.exit(f"Documenti richiamati da certificazioni.json non attivi in REG006: {missing_cert}")
     perimetro = perimetro + extra
     print(f"REG006 rev. {rev} del {data_rev}: {len(docs)} documenti attivi, {len(perimetro)} nel perimetro Service "
           f"({sum(1 for d in perimetro if d['area'].startswith('17.'))} Accettazione, {sum(1 for d in perimetro if d['area'].startswith('18.'))} Laboratorio, "
@@ -226,6 +242,7 @@ def main():
         if rec['service'] and rec['area'].startswith('16.'):
             rec['area'] = '16. Service di Laboratorio'      # etichetta chiara per il cliente (in REG006: 16. Business)
         rec['prep_only'] = bool(d.get('prep_only'))
+        rec['cert_only'] = bool(d.get('cert_only'))
         if srcs:
             srcs = sorted(srcs, key=lambda p: ('allegato' in os.path.basename(p).lower(), p))
             main_pdf = srcs[0]
@@ -278,7 +295,7 @@ def main():
         prep['colonne'] = {'intestazione': hdr, 'preparazioni': cp, 'codice': cc, 'descrizione': cd}
         print(f"Prestazioni: {len(rows)} righe, {sum(1 for r in rows if r['link'])} con preparazione collegata, {len(prep['non_risolte'])} riferimenti non risolti")
 
-    meta = {'reg006_rev': rev, 'reg006_data': data_rev, 'n_docs': sum(1 for r in result if not r['prep_only']), 'n_prep_docs': sum(1 for r in result if r['prep_only']), 'n_pdf': sum(1 for r in result if r['pdf']),
+    meta = {'reg006_rev': rev, 'reg006_data': data_rev, 'n_docs': sum(1 for r in result if not r['prep_only']), 'n_prep_docs': sum(1 for r in result if r['prep_only'] and not r['cert_only']), 'n_cert_docs': sum(1 for r in result if r['cert_only']), 'n_pdf': sum(1 for r in result if r['pdf']),
             'n_stampabili': sum(1 for r in result if r['stampabile']), 'n_prestazioni': len(prep['righe']),
             'n_prep_collegate': sum(1 for r in prep['righe'] if r.get('link')),
             'build': datetime.datetime.now().strftime('%d/%m/%Y %H:%M'), 'mancanti': missing, 'esclusi': excluded,

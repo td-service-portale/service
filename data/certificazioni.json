@@ -96,7 +96,8 @@
     {
       "titolo": "Politica Integrata",
       "testo": "Il documento di sistema sottoscritto dalla Direzione che fissa impegni e obiettivi del Sistema di Gestione Integrato.",
-      "pdf": "TD-SGI-POL001_01 - Politica Integrata.pdf"
+      "doc": "TD-SGI-POL001",
+      "nota": "Il link apre sempre la revisione in vigore del documento, letta da REG006 a ogni aggiornamento del portale."
     }
   ]
 }
