@@ -11,7 +11,9 @@ Pagine:
   /contatti         Contatti di Toscana Diagnostica
   /agora, /agora/<slug>          Agora', il blog (articoli in data/blog.json; newsletter Brevo configurabile)
   /in-allestimento/<id>          pagina segnaposto per le voci di menu senza link (data/menu.json)
-  /vademecum                     Vademecum degli esami (PDF consultabile e scaricabile, cartella vademecum/)
+  /vademecum                     Vademecum degli esami: incorpora il Vademecum online (VADEMECUM_ONLINE_URL, predefinito
+                                 https://referti.toscanadiagnostica.it/vademecum) se il sito lo consente; altrimenti il PDF della
+                                 cartella vademecum/ (consultabile e scaricabile) e il pulsante per aprire il Vademecum online in nuova scheda
 
 Link stabili (senza revisione, restano validi quando il documento sale di revisione):
   /p/<codice shortcut>   preparazione della prestazione GIPO (es. /p/ECO003); il codice GIPO numerico e' accettato come alias
@@ -21,8 +23,13 @@ Il PDF viene consegnato direttamente sotto l'indirizzo richiesto: la barra del b
 
 Variabili d'ambiente: CANONICAL_HOST (es. service.toscanadiagnostica.it): se impostato, ogni richiesta arrivata su un altro
 host viene reindirizzata (301) al dominio ufficiale. Lasciare vuoto finche' il DNS e il certificato non sono attivi.
+VADEMECUM_ONLINE_URL (facoltativa): indirizzo del Vademecum online da incorporare nella pagina /vademecum.
+
+Copia conforme nella Suite TD (01/11/2026): la Suite (suite.toscanadiagnostica.it/service) specchia questo sito leggendo /api/meta,
+/data/*.json e i PDF; nessuna modifica alla routine di aggiornamento (vedi README).
 """
-import os, json, re, unicodedata
+import os, json, re, time, unicodedata, urllib.request, urllib.error
+from urllib.parse import urlsplit
 from flask import Flask, send_from_directory, abort, redirect, request, jsonify, make_response
 
 BASE = os.path.dirname(os.path.abspath(__file__))
@@ -128,6 +135,111 @@ def agora(slug=None):
 @app.route('/vademecum')
 def vademecum():
     return _page('vademecum.html')
+
+
+# ---------- Vademecum online: si puo' incorporare? ----------
+# Richiesta del CEO (01/11/2026): la pagina /vademecum incorpora https://referti.toscanadiagnostica.it/vademecum in un iframe; se il
+# sito lo vieta (X-Frame-Options o Content-Security-Policy frame-ancestors) o non risponde, la pagina mostra il PDF locale e il
+# pulsante "Apri il Vademecum online" in nuova scheda. Stesse regole della Suite (server/src/modules/service/lib/regole.js).
+VADEMECUM_ONLINE = os.environ.get('VADEMECUM_ONLINE_URL', 'https://referti.toscanadiagnostica.it/vademecum').strip()
+VADEMECUM_PDF = 'Toscana Diagnostica - Vademecum degli esami.pdf'
+_FRAME_CACHE = {}          # chiave -> (istante, esito): la verifica vale un'ora
+
+
+def _origin(u):
+    try:
+        p = urlsplit(u)
+        return (p.scheme + '://' + p.netloc).lower() if p.scheme and p.netloc else None
+    except ValueError:
+        return None
+
+
+def _sorgente_ammette(src, site, target):
+    """Una sorgente di frame-ancestors ('self', https://*.toscanadiagnostica.it, https:, *) ammette l'origine di questo sito?"""
+    s = (src or '').strip().lower()
+    if not s or not site:
+        return False
+    if s == '*':
+        return True
+    if s == "'none'":
+        return False
+    if s == "'self'":
+        return bool(target) and _origin(target) == site
+    su = urlsplit(site)
+    if re.fullmatch(r'[a-z][a-z0-9+.-]*:', s):
+        return su.scheme + ':' == s
+    m = re.fullmatch(r'(?:([a-z][a-z0-9+.-]*)://)?(\*\.)?([^/:]+|\*)(?::(\d+|\*))?(/.*)?', s)
+    if not m:
+        return False
+    schema, jolly, host, porta = m.group(1), m.group(2), m.group(3), m.group(4)
+    if schema and schema != su.scheme:
+        return False
+    h = su.hostname or ''
+    if host != '*':
+        if jolly:
+            if not h.endswith('.' + host):
+                return False
+        elif h != host:
+            return False
+    porta_sito = str(su.port or (443 if su.scheme == 'https' else 80))
+    if porta and porta != '*' and porta != porta_sito:
+        return False
+    if not porta and su.port:
+        return False
+    return True
+
+
+def valuta_incorporamento(status, headers, site, target):
+    """(consentito, motivo). CSP frame-ancestors prevale su X-Frame-Options; risposta non 2xx = non incorporabile."""
+    if status is None or status >= 400:
+        return False, 'il sito risponde %s' % status if status else 'sito non raggiungibile'
+    csp = ','.join(headers.get_all('Content-Security-Policy') or [])
+    politiche = [d.strip() for p in csp.split(',') for d in p.split(';') if re.match(r'\s*frame-ancestors(\s|$)', d, re.I)]
+    if politiche:
+        for fa in politiche:
+            sorgenti = fa.split()[1:]
+            if not any(_sorgente_ammette(x, site, target) for x in sorgenti):
+                return False, 'Content-Security-Policy: ' + fa
+        return True, 'frame-ancestors ammette il portale'
+    xfo = (headers.get('X-Frame-Options') or '').strip()
+    if xfo:
+        v = xfo.upper()
+        if v == 'DENY':
+            return False, 'X-Frame-Options: DENY'
+        if v == 'SAMEORIGIN':
+            return (_origin(target) == site), 'X-Frame-Options: SAMEORIGIN'
+        if v.startswith('ALLOW-FROM'):
+            return (_origin(xfo[10:].strip()) == site), 'X-Frame-Options: ' + xfo
+    return True, 'nessun divieto di incorporamento'
+
+
+def _vademecum_pdf():
+    """PDF del Vademecum nella cartella vademecum/ (il primo in ordine alfabetico), con il nome storico come ripiego."""
+    try:
+        pdf = sorted(f for f in os.listdir(os.path.join(BASE, 'vademecum')) if f.lower().endswith('.pdf'))
+    except OSError:
+        pdf = []
+    return pdf[0] if pdf else VADEMECUM_PDF
+
+
+@app.route('/api/vademecum/embeddabile')
+def vademecum_embeddabile():
+    site = ('https://' + CANONICAL_HOST) if CANONICAL_HOST else _origin(request.host_url)
+    chiave = VADEMECUM_ONLINE + '|' + (site or '')
+    hit = _FRAME_CACHE.get(chiave)
+    if not hit or time.time() - hit[0] > 3600:
+        try:
+            req = urllib.request.Request(VADEMECUM_ONLINE, headers={'User-Agent': 'TD-Service-verifica-frame/1.0', 'Accept': 'text/html'})
+            with urllib.request.urlopen(req, timeout=8) as r:
+                esito = valuta_incorporamento(r.status, r.headers, site, r.geturl())
+        except urllib.error.HTTPError as e:
+            esito = valuta_incorporamento(e.code, e.headers, site, VADEMECUM_ONLINE)
+        except Exception as e:  # rete, DNS, timeout, certificato
+            esito = (False, 'sito non raggiungibile (%s)' % e.__class__.__name__)
+        hit = (time.time(), esito)
+        _FRAME_CACHE[chiave] = hit
+    return jsonify({'url': VADEMECUM_ONLINE, 'consentito': hit[1][0], 'motivo': hit[1][1], 'pdf': '/vademecum/' + _vademecum_pdf(),
+                    'verificato_at': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime(hit[0]))})
 
 
 @app.route('/vademecum/<path:fname>')

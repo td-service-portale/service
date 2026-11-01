@@ -14,6 +14,7 @@
 .viewer { background: #525659; border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); border: 1px solid var(--line); }
 .viewer iframe, .viewer object { display: block; width: 100%; height: calc(100vh - 230px); min-height: 560px; border: 0; }
 .viewer .nopdf { padding: 40px; text-align: center; color: #fff; }
+.viewer.online { background: #fff; }
 .tools { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
 .tools .searchbox { flex: 1 1 320px; }
 @media (max-width: 860px) { .viewer iframe, .viewer object { height: 70vh; min-height: 420px; } }
@@ -28,19 +29,21 @@
       <div class="page-head">
         <div>
           <h1>Vademecum degli esami</h1>
-          <div class="sub">La guida completa agli esami del Laboratorio di Analisi: per ogni analita codice, metodo, tempo di refertazione, tipo di campione, sezione e valori di riferimento. Sfoglialo qui, cerca un esame con la lente del visualizzatore oppure scaricalo per averlo sempre a portata di mano.</div>
+          <div class="sub">La guida completa agli esami del Laboratorio di Analisi: per ogni analita codice, metodo, tempo di refertazione, tipo di campione, sezione e valori di riferimento. Consultalo qui nella versione online sempre aggiornata, oppure apri e scarica la versione PDF per averla sempre a portata di mano.</div>
         </div>
       </div>
       <div class="grid g4" id="kpis"></div>
+      <div id="notice" class="mt"></div>
       <div class="card mt">
         <div class="bd tools">
-          <div class="searchbox" id="sb"><input type="text" id="q" placeholder="Cerca un esame nel vademecum (es. creatinina, HbA1c, tampone)…" autocomplete="off"><button class="iconbtn clear" id="qClear" aria-label="Cancella"></button></div>
-          <a class="btn" id="dl" href="#" download>Scarica il PDF</a>
-          <a class="btn ghost" id="open" href="#" target="_blank" rel="noopener">Apri a schermo intero</a>
+          <div class="searchbox" id="sb" style="display:none"><input type="text" id="q" placeholder="Cerca un esame nel vademecum PDF (es. creatinina, HbA1c, tampone)…" autocomplete="off"><button class="iconbtn clear" id="qClear" aria-label="Cancella"></button></div>
+          <a class="btn" id="online" href="#" target="_blank" rel="noopener">Apri il Vademecum online</a>
+          <a class="btn ghost" id="dl" href="#" download>Scarica il PDF</a>
+          <a class="btn ghost" id="open" href="#" target="_blank" rel="noopener">Apri il PDF a schermo intero</a>
           <button class="btn ghost" id="copyLink">Copia il link</button>
         </div>
       </div>
-      <div class="viewer mt" id="viewer"></div>
+      <div class="viewer mt" id="viewer"><div class="nopdf">Verifico il Vademecum online…</div></div>
       <div class="alert info mt" style="margin-top:16px">Il vademecum è un documento in continuo aggiornamento: fa fede la versione pubblicata qui. Per esami non presenti o per dubbi su campione e trasporto contatta il laboratorio allo 055 7765108 o a laboratorio@toscanadiagnostica.it.</div>
       <footer class="foot" id="footer"></footer>
     </div>
@@ -51,9 +54,11 @@
 (function () {
   const { icon, esc, shell, footer, copy } = window.SGI;
   const $ = id => document.getElementById(id);
-  const FILE = '/vademecum/Toscana Diagnostica - Vademecum degli esami.pdf';
-  const url = encodeURI(FILE);
-  Promise.all([window.SGI.menuReady, fetch('/api/meta').then(r => r.json())]).then(([_m, m]) => {
+  /* Vademecum online incorporato (richiesta del CEO, 01/11/2026): /api/vademecum/embeddabile dice se il sito lo consente
+     (X-Frame-Options, CSP frame-ancestors; verifica nel server, cache 1 ora). Se no, o se non risponde: PDF locale + pulsante. */
+  const ripiego = { url: 'https://referti.toscanadiagnostica.it/vademecum', consentito: false, motivo: 'verifica non disponibile', pdf: '/vademecum/Toscana Diagnostica - Vademecum degli esami.pdf' };
+  Promise.all([window.SGI.menuReady, fetch('/api/meta').then(r => r.json()), fetch('/api/vademecum/embeddabile').then(r => r.ok ? r.json() : ripiego).catch(() => ripiego)]).then(([_m, m, E]) => {
+    const url = encodeURI(E.pdf || ripiego.pdf);
     shell({ page: 'vademecum', meta: m, aree: null, shortcuts: [{ icon: 'download', label: 'Scarica il vademecum', href: url + '?dl=1' }] });
     footer(m);
     $('kpis').innerHTML = `
@@ -61,10 +66,17 @@
       <div class="card kpi"><div class="lbl">Contenuto per ogni esame</div><div class="val" style="font-size:20px">6 campi</div><div class="foot">codice · metodo · TAT · campione · sezione · valori di riferimento</div></div>
       <div class="card kpi"><div class="lbl">Come cercare</div><div class="val" style="font-size:20px">Ctrl + F</div><div class="foot">nel visualizzatore, oppure la casella qui sotto</div></div>
       <div class="card kpi"><div class="lbl">Formato</div><div class="val" style="font-size:20px">PDF</div><div class="foot">scaricabile e stampabile</div></div>`;
-    $('dl').href = url + '?dl=1'; $('open').href = url;
+    $('dl').href = url + '?dl=1'; $('open').href = url; $('online').href = E.url;
     $('copyLink').addEventListener('click', () => copy(location.origin + '/vademecum', 'Link copiato', 'Vademecum degli esami'));
     const render = q => { $('viewer').innerHTML = `<iframe src="${url}#toolbar=1&navpanes=0&view=FitH${q ? '&search=' + encodeURIComponent(q) : ''}" title="Vademecum degli esami"></iframe>`; };
-    render('');
+    if (E.consentito) {
+      $('viewer').classList.add('online');
+      $('viewer').innerHTML = `<iframe src="${esc(E.url)}" title="Vademecum degli esami (online)"></iframe>`;
+    } else {
+      $('notice').innerHTML = `<div class="alert warn">${icon('info', 18)}<div><strong>Il Vademecum online non si può incorporare in questa pagina</strong> (${esc(E.motivo)}). Aprilo in una nuova scheda con il pulsante "Apri il Vademecum online"; qui sotto la versione PDF.</div></div>`;
+      $('sb').style.display = '';
+      render('');
+    }
     const inp = $('q'), clr = $('qClear'); clr.innerHTML = icon('x', 14); $('sb').insertAdjacentHTML('afterbegin', icon('search'));
     let t = null;
     inp.addEventListener('input', () => { clr.classList.toggle('on', inp.value.length > 0); clearTimeout(t); t = setTimeout(() => render(inp.value.trim()), 500); });

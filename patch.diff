@@ -1,0 +1,306 @@
+--- a/app.py
++++ b/app.py
+@@ -11,7 +11,9 @@
+   /contatti         Contatti di Toscana Diagnostica
+   /agora, /agora/<slug>          Agora', il blog (articoli in data/blog.json; newsletter Brevo configurabile)
+   /in-allestimento/<id>          pagina segnaposto per le voci di menu senza link (data/menu.json)
+-  /vademecum                     Vademecum degli esami (PDF consultabile e scaricabile, cartella vademecum/)
++  /vademecum                     Vademecum degli esami: incorpora il Vademecum online (VADEMECUM_ONLINE_URL, predefinito
++                                 https://referti.toscanadiagnostica.it/vademecum) se il sito lo consente; altrimenti il PDF della
++                                 cartella vademecum/ (consultabile e scaricabile) e il pulsante per aprire il Vademecum online in nuova scheda
+ 
+ Link stabili (senza revisione, restano validi quando il documento sale di revisione):
+   /p/<codice shortcut>   preparazione della prestazione GIPO (es. /p/ECO003); il codice GIPO numerico e' accettato come alias
+@@ -21,8 +23,13 @@
+ 
+ Variabili d'ambiente: CANONICAL_HOST (es. service.toscanadiagnostica.it): se impostato, ogni richiesta arrivata su un altro
+ host viene reindirizzata (301) al dominio ufficiale. Lasciare vuoto finche' il DNS e il certificato non sono attivi.
++VADEMECUM_ONLINE_URL (facoltativa): indirizzo del Vademecum online da incorporare nella pagina /vademecum.
++
++Copia conforme nella Suite TD (01/11/2026): la Suite (suite.toscanadiagnostica.it/service) specchia questo sito leggendo /api/meta,
++/data/*.json e i PDF; nessuna modifica alla routine di aggiornamento (vedi README).
+ """
+-import os, json, re, unicodedata
++import os, json, re, time, unicodedata, urllib.request, urllib.error
++from urllib.parse import urlsplit
+ from flask import Flask, send_from_directory, abort, redirect, request, jsonify, make_response
+ 
+ BASE = os.path.dirname(os.path.abspath(__file__))
+@@ -130,6 +137,111 @@
+     return _page('vademecum.html')
+ 
+ 
++# ---------- Vademecum online: si puo' incorporare? ----------
++# Richiesta del CEO (01/11/2026): la pagina /vademecum incorpora https://referti.toscanadiagnostica.it/vademecum in un iframe; se il
++# sito lo vieta (X-Frame-Options o Content-Security-Policy frame-ancestors) o non risponde, la pagina mostra il PDF locale e il
++# pulsante "Apri il Vademecum online" in nuova scheda. Stesse regole della Suite (server/src/modules/service/lib/regole.js).
++VADEMECUM_ONLINE = os.environ.get('VADEMECUM_ONLINE_URL', 'https://referti.toscanadiagnostica.it/vademecum').strip()
++VADEMECUM_PDF = 'Toscana Diagnostica - Vademecum degli esami.pdf'
++_FRAME_CACHE = {}          # chiave -> (istante, esito): la verifica vale un'ora
++
++
++def _origin(u):
++    try:
++        p = urlsplit(u)
++        return (p.scheme + '://' + p.netloc).lower() if p.scheme and p.netloc else None
++    except ValueError:
++        return None
++
++
++def _sorgente_ammette(src, site, target):
++    """Una sorgente di frame-ancestors ('self', https://*.toscanadiagnostica.it, https:, *) ammette l'origine di questo sito?"""
++    s = (src or '').strip().lower()
++    if not s or not site:
++        return False
++    if s == '*':
++        return True
++    if s == "'none'":
++        return False
++    if s == "'self'":
++        return bool(target) and _origin(target) == site
++    su = urlsplit(site)
++    if re.fullmatch(r'[a-z][a-z0-9+.-]*:', s):
++        return su.scheme + ':' == s
++    m = re.fullmatch(r'(?:([a-z][a-z0-9+.-]*)://)?(\*\.)?([^/:]+|\*)(?::(\d+|\*))?(/.*)?', s)
++    if not m:
++        return False
++    schema, jolly, host, porta = m.group(1), m.group(2), m.group(3), m.group(4)
++    if schema and schema != su.scheme:
++        return False
++    h = su.hostname or ''
++    if host != '*':
++        if jolly:
++            if not h.endswith('.' + host):
++                return False
++        elif h != host:
++            return False
++    porta_sito = str(su.port or (443 if su.scheme == 'https' else 80))
++    if porta and porta != '*' and porta != porta_sito:
++        return False
++    if not porta and su.port:
++        return False
++    return True
++
++
++def valuta_incorporamento(status, headers, site, target):
++    """(consentito, motivo). CSP frame-ancestors prevale su X-Frame-Options; risposta non 2xx = non incorporabile."""
++    if status is None or status >= 400:
++        return False, 'il sito risponde %s' % status if status else 'sito non raggiungibile'
++    csp = ','.join(headers.get_all('Content-Security-Policy') or [])
++    politiche = [d.strip() for p in csp.split(',') for d in p.split(';') if re.match(r'\s*frame-ancestors(\s|$)', d, re.I)]
++    if politiche:
++        for fa in politiche:
++            sorgenti = fa.split()[1:]
++            if not any(_sorgente_ammette(x, site, target) for x in sorgenti):
++                return False, 'Content-Security-Policy: ' + fa
++        return True, 'frame-ancestors ammette il portale'
++    xfo = (headers.get('X-Frame-Options') or '').strip()
++    if xfo:
++        v = xfo.upper()
++        if v == 'DENY':
++            return False, 'X-Frame-Options: DENY'
++        if v == 'SAMEORIGIN':
++            return (_origin(target) == site), 'X-Frame-Options: SAMEORIGIN'
++        if v.startswith('ALLOW-FROM'):
++            return (_origin(xfo[10:].strip()) == site), 'X-Frame-Options: ' + xfo
++    return True, 'nessun divieto di incorporamento'
++
++
++def _vademecum_pdf():
++    """PDF del Vademecum nella cartella vademecum/ (il primo in ordine alfabetico), con il nome storico come ripiego."""
++    try:
++        pdf = sorted(f for f in os.listdir(os.path.join(BASE, 'vademecum')) if f.lower().endswith('.pdf'))
++    except OSError:
++        pdf = []
++    return pdf[0] if pdf else VADEMECUM_PDF
++
++
++@app.route('/api/vademecum/embeddabile')
++def vademecum_embeddabile():
++    site = ('https://' + CANONICAL_HOST) if CANONICAL_HOST else _origin(request.host_url)
++    chiave = VADEMECUM_ONLINE + '|' + (site or '')
++    hit = _FRAME_CACHE.get(chiave)
++    if not hit or time.time() - hit[0] > 3600:
++        try:
++            req = urllib.request.Request(VADEMECUM_ONLINE, headers={'User-Agent': 'TD-Service-verifica-frame/1.0', 'Accept': 'text/html'})
++            with urllib.request.urlopen(req, timeout=8) as r:
++                esito = valuta_incorporamento(r.status, r.headers, site, r.geturl())
++        except urllib.error.HTTPError as e:
++            esito = valuta_incorporamento(e.code, e.headers, site, VADEMECUM_ONLINE)
++        except Exception as e:  # rete, DNS, timeout, certificato
++            esito = (False, 'sito non raggiungibile (%s)' % e.__class__.__name__)
++        hit = (time.time(), esito)
++        _FRAME_CACHE[chiave] = hit
++    return jsonify({'url': VADEMECUM_ONLINE, 'consentito': hit[1][0], 'motivo': hit[1][1], 'pdf': '/vademecum/' + _vademecum_pdf(),
++                    'verificato_at': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime(hit[0]))})
++
++
+ @app.route('/vademecum/<path:fname>')
+ def vademecum_file(fname):
+     resp = make_response(send_from_directory(os.path.join(BASE, 'vademecum'), fname, as_attachment=request.args.get('dl') == '1'))
+--- a/README.md
++++ b/README.md
+@@ -6,7 +6,8 @@
+ 2. **Certificazioni di qualità** (`/certificazioni`): le norme del Sistema di Gestione Integrato, i certificati EuCI scaricabili (ISO 9001, 14001, 45001, 37001), campo di applicazione, accreditamento SSR, autorizzazione sanitaria, Politica Integrata.
+ 3. **VEQ** (`/veq`): cos'è la Valutazione Esterna di Qualità, il CRRVEQ Careggi, i 23 programmi del ciclo 2026, le procedure SGI collegate, il contratto di adesione.
+ 4. **Agorà** (`/agora`, `/agora/<slug>`): il blog. Articoli in `data/blog.json` (titolo, slug, data, autore, sommario, paragrafi); in fondo il box newsletter: con `newsletter.brevo_url` valorizzato mostra il form Brevo in iframe, altrimenti un pulsante mailto a `fallback_email`.
+-5. **Servizi** (voci configurabili in `data/menu.json`): Circolari e aggiornamenti operativi, Ordine del materiale, Check-up e promozioni mensili (per ora senza link: aprono la pagina segnaposto `/in-allestimento/<id>`; quando `href` viene valorizzato il menu punta direttamente al link, in nuova scheda se `blank` è true), Portale NC (https://nc.toscanadiagnostica.it, nuova scheda). Una voce con `box` {url, titolo, testo, icon} mostra nella pagina segnaposto un riquadro cliccabile verso un portale esterno (es. Ordine del materiale -> https://orders.toscanadiagnostica.it).
++5. **Servizi** (voci configurabili in `data/menu.json`): Vademecum (`/vademecum`, vedi sotto), Circolari e aggiornamenti operativi, Ordine del materiale e Portale NC (dal 01/11/2026 aprono i widget della Suite TD in nuova scheda: https://suite.toscanadiagnostica.it/circolari, /orders, /nc), Check-up e promozioni mensili (per ora senza link: apre la pagina segnaposto `/in-allestimento/<id>`; quando `href` viene valorizzato il menu punta direttamente al link, in nuova scheda se `blank` è true). Una voce con `box` {url, titolo, testo, icon} mostra nella pagina segnaposto un riquadro cliccabile verso un portale esterno (es. Ordine del materiale -> Suite TD, widget Ordini).
++   **Vademecum** (`/vademecum`, richiesta del CEO del 01/11/2026): la pagina incorpora https://referti.toscanadiagnostica.it/vademecum (variabile `VADEMECUM_ONLINE_URL`) in un iframe. Il server verifica prima se il sito lo consente (`/api/vademecum/embeddabile`: X-Frame-Options e Content-Security-Policy frame-ancestors, cache di un'ora); se è vietato o il sito non risponde, la pagina mostra il PDF della cartella `vademecum/` (consultabile, ricercabile, scaricabile) e il pulsante "Apri il Vademecum online" in nuova scheda.
+ 6. **Contatti** (`/contatti`), da `data/contatti.json`.
+ 
+ ## Perimetro documentale (decisione AD 13/10/2026)
+@@ -44,6 +45,7 @@
+ | `/certificazioni`, `/veq`, `/contatti`, `/agora`, `/agora/<slug>`, `/vademecum`, `/in-allestimento/<id>` | pagine |
+ | `/certificati/<file>.pdf`, `/docs/<area>/<file>.pdf`, `/stampabili/<file>.pdf` | file |
+ | `/api/preparazioni`, `/api/meta`, `/data/*.json`, `/healthz` | dati |
++| `/api/vademecum/embeddabile` | il Vademecum online si può incorporare? (`consentito`, `motivo`, `pdf` di ripiego) |
+ 
+ I PDF sono consegnati direttamente sotto l'indirizzo richiesto (nessun redirect): nella barra resta `service.toscanadiagnostica.it/p/ECO003`. Il pulsante busta apre il client di posta con i link e li copia negli appunti anche in HTML; il pulsante catena copia l'URL in doppio formato (testo + collegamento).
+ 
+@@ -58,3 +60,13 @@
+ Dal PC di Francesco, con il repo clonato e OneDrive sincronizzato: `build\aggiorna_service.bat`. Rilegge REG006 corrente, copia PDF e stampabili del perimetro, rigenera l'indice full-text e la mappa delle preparazioni, poi commit e push; Render ripubblica in 2-3 minuti. Il footer mostra revisione REG006 e data di pubblicazione.
+ 
+ I file redazionali (`certificazioni.json`, `veq.json`, `contatti.json`, `blog.json`, `menu.json`) e la cartella `certificati/` si aggiornano a mano quando cambia un certificato, un ciclo VEQ o un contatto: basta modificare il JSON (e caricare il PDF) e rilanciare il batch, oppure caricare il file sul repo via web.
++
++## Copia conforme nella Suite (01/11/2026)
++
++Richiesta del CEO: "inglobarlo e renderlo parte della suite. Ma continuare ad aggiornare la app separata. Avere cioè copia conforme dei due sistemi". Il Portale Service esiste in due presentazioni identiche: questo sito pubblico, che **resta la fonte dei contenuti**, e il widget "Portale Service" della Suite TD (https://suite.toscanadiagnostica.it/service), che ne è uno **specchio di sola lettura** per gli utenti della Suite (personale e clienti service con accesso).
++
++- La Suite legge da qui `/api/meta` e `/data/*.json` ogni 6 ore (e con "Aggiorna adesso" nelle Impostazioni del widget): se cambia `meta.build` o uno dei JSON (anche un file redazionale caricato via web), sostituisce i contenuti e svuota la propria cache dei PDF. I PDF (`/docs/...`, `/stampabili/...`, `/certificati/...`, `/vademecum/...`) e i loghi di `/static/` li scarica alla prima apertura e li tiene in cache.
++- Se dalla rete della Suite il sito non fosse raggiungibile, nelle Impostazioni del widget si carica lo ZIP di questo repository (GitHub > Code > Download ZIP): stessi contenuti.
++- **La routine di aggiornamento non cambia**: `build\aggiorna_service.bat` (o la modifica dei JSON redazionali) come sempre. Non serve fare nulla nella Suite.
++- Non rinominare né spostare `data/*.json`, `/api/meta` e le cartelle dei PDF: sono il contratto con lo specchio. Una nuova voce in `data/menu.json` compare da sola anche nella Suite; una nuova pagina o un nuovo JSON vanno aggiunti anche alla Suite.
++- Nel menu Servizi le voci Circolari, Ordine del materiale e Portale NC puntano ai widget della Suite; la voce Vademecum ha il campo `pdf` (PDF di ripiego, usato anche dalla Suite).
+--- a/data/menu.json
++++ b/data/menu.json
+@@ -1,5 +1,5 @@
+ {
+- "_nota": "Voci di menu esterne o 'statiche'. href vuoto = la voce apre la pagina segnaposto /in-allestimento/<id> finche' non viene fornito il link definitivo. blank=true apre in una nuova scheda.",
++ "_nota": "Voci di menu esterne o 'statiche'. href vuoto = la voce apre la pagina segnaposto /in-allestimento/<id> finche' non viene fornito il link definitivo. blank=true apre in una nuova scheda. Dal 01/11/2026 (richiesta del CEO) Circolari, Ordine del materiale e Portale NC aprono i widget della Suite TD (suite.toscanadiagnostica.it/circolari, /orders, /nc); il Vademecum incorpora https://referti.toscanadiagnostica.it/vademecum (pagina /vademecum) e ripiega sul PDF indicato in 'pdf'. La Suite specchia questo file: le stesse voci compaiono nel Portale Service della Suite.",
+  "voci": [
+   {
+    "id": "vademecum",
+@@ -7,13 +7,15 @@
+    "icon": "book",
+    "href": "/vademecum",
+    "blank": false,
+-   "descrizione": "La guida operativa per i laboratori clienti: come preparare, confezionare e inviare i campioni, tempi, modulistica, contatti."
++   "descrizione": "La guida operativa per i laboratori clienti: come preparare, confezionare e inviare i campioni, tempi, modulistica, contatti.",
++   "pdf": "vademecum/Toscana Diagnostica - Vademecum degli esami.pdf",
++   "online": "https://referti.toscanadiagnostica.it/vademecum"
+   },
+   {
+    "id": "circolari",
+    "label": "Circolari e aggiornamenti operativi",
+    "icon": "list",
+-   "href": "",
++   "href": "https://suite.toscanadiagnostica.it/circolari",
+    "blank": true,
+    "descrizione": "Le comunicazioni operative del laboratorio ai clienti Service: variazioni di metodo, tempi di refertazione, calendario festività, modulistica aggiornata."
+   },
+@@ -21,14 +23,14 @@
+    "id": "ordine-materiale",
+    "label": "Ordine del materiale",
+    "icon": "folder",
+-   "href": "",
++   "href": "https://suite.toscanadiagnostica.it/orders",
+    "blank": true,
+    "descrizione": "Richiesta di provette, contenitori, buste di trasporto e modulistica. In alternativa è disponibile il modulo TD-SGI-MOD252 (Richiesta di Approvvigionamento Materiale) da inviare a laboratorio@toscanadiagnostica.it.",
+    "modulo": "TD-SGI-MOD252",
+    "box": {
+-    "url": "https://orders.toscanadiagnostica.it",
+-    "titolo": "Portale Ordini",
+-    "testo": "Ordina provette, contenitori, buste di trasporto e modulistica dal portale dedicato. Si apre in una nuova scheda.",
++    "url": "https://suite.toscanadiagnostica.it/orders",
++    "titolo": "Ordini e Magazzino · Suite TD",
++    "testo": "Ordina provette, contenitori, buste di trasporto e modulistica dal widget Ordini e Magazzino della Suite TD (accesso con le credenziali del laboratorio). Si apre in una nuova scheda.",
+     "icon": "folder"
+    }
+   },
+@@ -44,9 +46,9 @@
+    "id": "portale-nc",
+    "label": "Portale NC",
+    "icon": "shield",
+-   "href": "https://nc.toscanadiagnostica.it/",
++   "href": "https://suite.toscanadiagnostica.it/nc",
+    "blank": true,
+-   "descrizione": "Portale per la segnalazione delle non conformità."
++   "descrizione": "Segnalazione e gestione delle non conformità nel widget Non conformità della Suite TD."
+   }
+  ]
+-}
+\ No newline at end of file
++}
+--- a/static/vademecum.html
++++ b/static/vademecum.html
+@@ -14,6 +14,7 @@
+ .viewer { background: #525659; border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); border: 1px solid var(--line); }
+ .viewer iframe, .viewer object { display: block; width: 100%; height: calc(100vh - 230px); min-height: 560px; border: 0; }
+ .viewer .nopdf { padding: 40px; text-align: center; color: #fff; }
++.viewer.online { background: #fff; }
+ .tools { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+ .tools .searchbox { flex: 1 1 320px; }
+ @media (max-width: 860px) { .viewer iframe, .viewer object { height: 70vh; min-height: 420px; } }
+@@ -28,19 +29,21 @@
+       <div class="page-head">
+         <div>
+           <h1>Vademecum degli esami</h1>
+-          <div class="sub">La guida completa agli esami del Laboratorio di Analisi: per ogni analita codice, metodo, tempo di refertazione, tipo di campione, sezione e valori di riferimento. Sfoglialo qui, cerca un esame con la lente del visualizzatore oppure scaricalo per averlo sempre a portata di mano.</div>
++          <div class="sub">La guida completa agli esami del Laboratorio di Analisi: per ogni analita codice, metodo, tempo di refertazione, tipo di campione, sezione e valori di riferimento. Consultalo qui nella versione online sempre aggiornata, oppure apri e scarica la versione PDF per averla sempre a portata di mano.</div>
+         </div>
+       </div>
+       <div class="grid g4" id="kpis"></div>
++      <div id="notice" class="mt"></div>
+       <div class="card mt">
+         <div class="bd tools">
+-          <div class="searchbox" id="sb"><input type="text" id="q" placeholder="Cerca un esame nel vademecum (es. creatinina, HbA1c, tampone)…" autocomplete="off"><button class="iconbtn clear" id="qClear" aria-label="Cancella"></button></div>
+-          <a class="btn" id="dl" href="#" download>Scarica il PDF</a>
+-          <a class="btn ghost" id="open" href="#" target="_blank" rel="noopener">Apri a schermo intero</a>
++          <div class="searchbox" id="sb" style="display:none"><input type="text" id="q" placeholder="Cerca un esame nel vademecum PDF (es. creatinina, HbA1c, tampone)…" autocomplete="off"><button class="iconbtn clear" id="qClear" aria-label="Cancella"></button></div>
++          <a class="btn" id="online" href="#" target="_blank" rel="noopener">Apri il Vademecum online</a>
++          <a class="btn ghost" id="dl" href="#" download>Scarica il PDF</a>
++          <a class="btn ghost" id="open" href="#" target="_blank" rel="noopener">Apri il PDF a schermo intero</a>
+           <button class="btn ghost" id="copyLink">Copia il link</button>
+         </div>
+       </div>
+-      <div class="viewer mt" id="viewer"></div>
++      <div class="viewer mt" id="viewer"><div class="nopdf">Verifico il Vademecum online…</div></div>
+       <div class="alert info mt" style="margin-top:16px">Il vademecum è un documento in continuo aggiornamento: fa fede la versione pubblicata qui. Per esami non presenti o per dubbi su campione e trasporto contatta il laboratorio allo 055 7765108 o a laboratorio@toscanadiagnostica.it.</div>
+       <footer class="foot" id="footer"></footer>
+     </div>
+@@ -51,9 +54,11 @@
+ (function () {
+   const { icon, esc, shell, footer, copy } = window.SGI;
+   const $ = id => document.getElementById(id);
+-  const FILE = '/vademecum/Toscana Diagnostica - Vademecum degli esami.pdf';
+-  const url = encodeURI(FILE);
+-  Promise.all([window.SGI.menuReady, fetch('/api/meta').then(r => r.json())]).then(([_m, m]) => {
++  /* Vademecum online incorporato (richiesta del CEO, 01/11/2026): /api/vademecum/embeddabile dice se il sito lo consente
++     (X-Frame-Options, CSP frame-ancestors; verifica nel server, cache 1 ora). Se no, o se non risponde: PDF locale + pulsante. */
++  const ripiego = { url: 'https://referti.toscanadiagnostica.it/vademecum', consentito: false, motivo: 'verifica non disponibile', pdf: '/vademecum/Toscana Diagnostica - Vademecum degli esami.pdf' };
++  Promise.all([window.SGI.menuReady, fetch('/api/meta').then(r => r.json()), fetch('/api/vademecum/embeddabile').then(r => r.ok ? r.json() : ripiego).catch(() => ripiego)]).then(([_m, m, E]) => {
++    const url = encodeURI(E.pdf || ripiego.pdf);
+     shell({ page: 'vademecum', meta: m, aree: null, shortcuts: [{ icon: 'download', label: 'Scarica il vademecum', href: url + '?dl=1' }] });
+     footer(m);
+     $('kpis').innerHTML = `
+@@ -61,10 +66,17 @@
+       <div class="card kpi"><div class="lbl">Contenuto per ogni esame</div><div class="val" style="font-size:20px">6 campi</div><div class="foot">codice · metodo · TAT · campione · sezione · valori di riferimento</div></div>
+       <div class="card kpi"><div class="lbl">Come cercare</div><div class="val" style="font-size:20px">Ctrl + F</div><div class="foot">nel visualizzatore, oppure la casella qui sotto</div></div>
+       <div class="card kpi"><div class="lbl">Formato</div><div class="val" style="font-size:20px">PDF</div><div class="foot">scaricabile e stampabile</div></div>`;
+-    $('dl').href = url + '?dl=1'; $('open').href = url;
++    $('dl').href = url + '?dl=1'; $('open').href = url; $('online').href = E.url;
+     $('copyLink').addEventListener('click', () => copy(location.origin + '/vademecum', 'Link copiato', 'Vademecum degli esami'));
+     const render = q => { $('viewer').innerHTML = `<iframe src="${url}#toolbar=1&navpanes=0&view=FitH${q ? '&search=' + encodeURIComponent(q) : ''}" title="Vademecum degli esami"></iframe>`; };
+-    render('');
++    if (E.consentito) {
++      $('viewer').classList.add('online');
++      $('viewer').innerHTML = `<iframe src="${esc(E.url)}" title="Vademecum degli esami (online)"></iframe>`;
++    } else {
++      $('notice').innerHTML = `<div class="alert warn">${icon('info', 18)}<div><strong>Il Vademecum online non si può incorporare in questa pagina</strong> (${esc(E.motivo)}). Aprilo in una nuova scheda con il pulsante "Apri il Vademecum online"; qui sotto la versione PDF.</div></div>`;
++      $('sb').style.display = '';
++      render('');
++    }
+     const inp = $('q'), clr = $('qClear'); clr.innerHTML = icon('x', 14); $('sb').insertAdjacentHTML('afterbegin', icon('search'));
+     let t = null;
+     inp.addEventListener('input', () => { clr.classList.toggle('on', inp.value.length > 0); clearTimeout(t); t = setTimeout(() => render(inp.value.trim()), 500); });
