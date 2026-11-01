@@ -36,3 +36,7 @@ Sito patchato avviato con Flask 3.1.3 su una copia con i file del repo, Vademecu
   ripiego PDF + pulsante; per incorporarlo davvero va aggiunto sul sito referti `Content-Security-Policy: frame-ancestors
   https://service.toscanadiagnostica.it https://suite.toscanadiagnostica.it`).
 - I link verso la Suite richiedono un account: i clienti senza accesso alla Suite trovano la pagina di login (Circolari, Ordini, NC).
+
+
+## 01/11/2026 (2)
+- `data/menu.json`: nuova voce Servizi "Referti di Laboratorio" → https://referti.toscanadiagnostica.it/ in scheda nuova (richiesta del CEO). La Suite la mostra comunque anche se il sito non è aggiornato.

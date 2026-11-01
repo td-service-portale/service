@@ -49,6 +49,14 @@
    "href": "https://suite.toscanadiagnostica.it/nc",
    "blank": true,
    "descrizione": "Segnalazione e gestione delle non conformità nel widget Non conformità della Suite TD."
+  },
+  {
+   "id": "referti",
+   "label": "Referti di Laboratorio",
+   "icon": "doc",
+   "href": "https://referti.toscanadiagnostica.it/",
+   "blank": true,
+   "descrizione": "Il portale dei referti del Laboratorio di Analisi: consultazione e download dei referti per i laboratori e le strutture clienti."
   }
  ]
 }
