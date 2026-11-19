@@ -1,5 +1,5 @@
 {
- "_nota": "Voci di menu esterne o 'statiche'. href vuoto = la voce apre la pagina segnaposto /in-allestimento/<id> finche' non viene fornito il link definitivo. blank=true apre in una nuova scheda. Dal 01/11/2026 (richiesta del CEO) Circolari, Ordine del materiale e Portale NC aprono i widget della Suite TD (suite.toscanadiagnostica.it/circolari, /orders, /nc); il Vademecum incorpora https://referti.toscanadiagnostica.it/vademecum (pagina /vademecum) e ripiega sul PDF indicato in 'pdf'. La Suite specchia questo file: le stesse voci compaiono nel Portale Service della Suite.",
+ "_nota": "Voci di menu esterne o 'statiche'. href vuoto = la voce apre la pagina segnaposto /in-allestimento/<id> finche' non viene fornito il link definitivo. blank=true apre in una nuova scheda.",
  "voci": [
   {
    "id": "vademecum",
@@ -7,15 +7,13 @@
    "icon": "book",
    "href": "/vademecum",
    "blank": false,
-   "descrizione": "La guida operativa per i laboratori clienti: come preparare, confezionare e inviare i campioni, tempi, modulistica, contatti.",
-   "pdf": "vademecum/Toscana Diagnostica - Vademecum degli esami.pdf",
-   "online": "https://referti.toscanadiagnostica.it/vademecum"
+   "descrizione": "La guida operativa per i laboratori clienti: come preparare, confezionare e inviare i campioni, tempi, modulistica, contatti."
   },
   {
    "id": "circolari",
    "label": "Circolari e aggiornamenti operativi",
    "icon": "list",
-   "href": "https://suite.toscanadiagnostica.it/circolari",
+   "href": "",
    "blank": true,
    "descrizione": "Le comunicazioni operative del laboratorio ai clienti Service: variazioni di metodo, tempi di refertazione, calendario festività, modulistica aggiornata."
   },
@@ -23,14 +21,14 @@
    "id": "ordine-materiale",
    "label": "Ordine del materiale",
    "icon": "folder",
-   "href": "https://suite.toscanadiagnostica.it/orders",
+   "href": "",
    "blank": true,
    "descrizione": "Richiesta di provette, contenitori, buste di trasporto e modulistica. In alternativa è disponibile il modulo TD-SGI-MOD252 (Richiesta di Approvvigionamento Materiale) da inviare a laboratorio@toscanadiagnostica.it.",
    "modulo": "TD-SGI-MOD252",
    "box": {
-    "url": "https://suite.toscanadiagnostica.it/orders",
-    "titolo": "Ordini e Magazzino · Suite TD",
-    "testo": "Ordina provette, contenitori, buste di trasporto e modulistica dal widget Ordini e Magazzino della Suite TD (accesso con le credenziali del laboratorio). Si apre in una nuova scheda.",
+    "url": "https://orders.toscanadiagnostica.it",
+    "titolo": "Portale Ordini",
+    "testo": "Ordina provette, contenitori, buste di trasporto e modulistica dal portale dedicato. Si apre in una nuova scheda.",
     "icon": "folder"
    }
   },
@@ -46,17 +44,9 @@
    "id": "portale-nc",
    "label": "Portale NC",
    "icon": "shield",
-   "href": "https://suite.toscanadiagnostica.it/nc",
+   "href": "https://nc.toscanadiagnostica.it/",
    "blank": true,
-   "descrizione": "Segnalazione e gestione delle non conformità nel widget Non conformità della Suite TD."
-  },
-  {
-   "id": "referti",
-   "label": "Referti di Laboratorio",
-   "icon": "doc",
-   "href": "https://referti.toscanadiagnostica.it/",
-   "blank": true,
-   "descrizione": "Il portale dei referti del Laboratorio di Analisi: consultazione e download dei referti per i laboratori e le strutture clienti."
+   "descrizione": "Portale per la segnalazione delle non conformità."
   }
  ]
 }
