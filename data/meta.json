@@ -1,6 +1,6 @@
 {
- "reg006_rev": "91",
- "reg006_data": "21 novembre 2026",
+ "reg006_rev": "92",
+ "reg006_data": "25 novembre 2026",
  "n_docs": 153,
  "n_prep_docs": 40,
  "n_cert_docs": 1,
@@ -8,7 +8,7 @@
  "n_stampabili": 143,
  "n_prestazioni": 569,
  "n_prep_collegate": 569,
- "build": "21/11/2026 11:36",
+ "build": "25/11/2026 16:54",
  "mancanti": [],
  "esclusi": [],
  "aree": [
